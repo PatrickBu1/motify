@@ -16,18 +16,39 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<?> addUser(@RequestBody User body){
-        return ResponseEntity.noContent().build();
+    @GetMapping("/get")
+    public ResponseEntity<User> getUserByUserId(@RequestParam String userId){
+        final User user;
+        try{
+            user = userService.findByUserId(userId);
+        }catch(Exception e){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(user);
     }
 
-    @DeleteMapping("/delete/{userId}")
-    public ResponseEntity<?> deleteUser(@RequestParam String userId){
-        return ResponseEntity.noContent().build();
+    @PostMapping("/create")
+    public ResponseEntity<Void> createUser(@RequestBody User body){
+        try {
+            userService.createUser(body);
+        }catch(Exception e){
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/modify")
-    public ResponseEntity<?> modifyUser(@RequestBody User body){
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> deleteUser(@RequestParam String userId){
+        try{
+            userService.deleteUser(userId);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<?> updateUser(@RequestBody User body){
         return ResponseEntity.noContent().build();
     }
 
