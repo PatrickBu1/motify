@@ -1,31 +1,27 @@
-package com.cs4523groupb11.Motify.entities;
+package com.cs4523groupb11.Motify.payload;
 
-import com.cs4523groupb11.Motify.repositories.PrivateChallengeRepository;
+import com.cs4523groupb11.Motify.entities.ChallengeCategory;
+import com.cs4523groupb11.Motify.entities.CheckInData;
+import com.cs4523groupb11.Motify.entities.User;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Check;
 
 import java.util.Date;
 import java.util.List;
 
-@Entity
-@Table(name = "private_challenges",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"owner", "name"})})
-public class PrivateChallenge {
+public class PrivateChallengePayload {
     private String id;
-    private User owner;
+    private String owner;
     private String name;
     private String description;
-    private ChallengeCategory category;
+    private String category;
     private Date startDate;
     private Date endDate;
     private Integer objective;
-    private List<CheckInData> checkInDataList;
+    private List<String> checkInDataList;
 
-    public PrivateChallenge(){
-
-    }
-    public PrivateChallenge(User owner, String name, String description, ChallengeCategory category, Date startDate,
-                            Date endDate, Integer objective, List<CheckInData> checkInDataList){
+    public PrivateChallengePayload(){}
+    public PrivateChallengePayload(String owner, String name, String description, String category, Date startDate,
+                            Date endDate, Integer objective, List<String> checkInDataList){
         this.owner = owner;
         this.name = name;
         this.description = description;
@@ -36,8 +32,6 @@ public class PrivateChallenge {
         this.checkInDataList = checkInDataList;
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     public String getId(){
         return id;
     }
@@ -45,16 +39,13 @@ public class PrivateChallenge {
         this.id = id;
     }
 
-    @ManyToOne()
-    @JoinColumn(name = "owner", nullable = false)
-    public User getOwner(){
+    public String getOwner(){
         return owner;
     }
-    public void setOwner(User owner){
+    public void setOwner(String owner){
         this.owner = owner;
     }
 
-    @Column(name="name", nullable = false)
     public String getName(){
         return name;
     }
@@ -62,7 +53,6 @@ public class PrivateChallenge {
         this.name = name;
     }
 
-    @Column(name="description")
     public String getDescription(){
         return description;
     }
@@ -70,11 +60,9 @@ public class PrivateChallenge {
         this.description = description;
     }
 
-    @Column(name="category")
-    public ChallengeCategory getCategory(){return category;}
-    public void setCategory(ChallengeCategory category){this.category = category;}
+    public String getCategory(){return category;}
+    public void setCategory(String category){this.category = category;}
 
-    @Column(name="start_date")
     public Date getStartDate(){
         return startDate;
     }
@@ -82,7 +70,6 @@ public class PrivateChallenge {
         this.startDate = startDate;
     }
 
-    @Column(name="end_date")
     public Date getEndDate(){
         return endDate;
     }
@@ -90,7 +77,6 @@ public class PrivateChallenge {
         this.endDate = endDate;
     }
 
-    @Column(name="objective")
     public Integer getObjective(){
         return objective;
     }
@@ -98,12 +84,10 @@ public class PrivateChallenge {
         this.objective = objective;
     }
 
-    @OneToMany(mappedBy = "private_challenge")
-    public List<CheckInData> getCheckInDataList(){
+    public List<String> getCheckInDataList(){
         return checkInDataList;
     }
-    public void setCheckInDataList(List<CheckInData> checkInDataList){
+    public void setCheckInDataList(List<String> checkInDataList){
         this.checkInDataList = checkInDataList;
     }
-
 }

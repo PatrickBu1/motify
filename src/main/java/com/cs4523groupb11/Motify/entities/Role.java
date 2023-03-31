@@ -2,7 +2,7 @@ package com.cs4523groupb11.Motify.entities;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "role")
+@Table(name = "roles")
 public class Role {
     private Integer id;
     private RoleEnum name;

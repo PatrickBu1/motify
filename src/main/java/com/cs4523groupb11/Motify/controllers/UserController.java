@@ -6,50 +6,49 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 public class UserController {
-    private UserService userService;
 
     @Autowired
-    public UserController(UserService userService){
-        this.userService = userService;
+    private UserService userService;
+
+    @GetMapping("/findById/{id}")
+    public ResponseEntity<User> findById(@PathVariable String id){
+        Optional<User> user = userService.findById(id);
+        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/get")
-    public ResponseEntity<User> getUserByUserId(@RequestParam String userId){
-        final User user;
-        try{
-            user = userService.findByUserId(userId);
-        }catch(Exception e){
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(user);
+    @GetMapping("/findByUsername/{username}")
+    public ResponseEntity<String> findByUsername(@PathVariable String username){
+        Optional<String> user = userService.findByUsername(username);
+        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/findByEmail/{email}")
+    public ResponseEntity<String> findByEmail(@PathVariable String email){
+        Optional<String> user = userService.findByEmail(email);
+        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Void> createUser(@RequestBody User body){
-        try {
-            userService.createUser(body);
-        }catch(Exception e){
-            return ResponseEntity.badRequest().build();
-        }
-        return ResponseEntity.ok().build();
+    public ResponseEntity<User> create(@RequestBody User body){
+        Optional<User> user = userService.create(body);
+        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteUser(@RequestParam String userId){
-        try{
-            userService.deleteUser(userId);
-        }catch (Exception e){
-            return ResponseEntity.badRequest().build();
-        }
-        return ResponseEntity.ok().build();
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<User> delete(@PathVariable String id){
+        Optional<User> user = userService.delete(id);
+        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PutMapping("/update")
-    public ResponseEntity<?> updateUser(@RequestBody User body){
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> update(@RequestBody User body){
+        Optional<User> user = userService.update(body);
+        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
 }

@@ -1,23 +1,37 @@
 package com.cs4523groupb11.Motify.repositories;
 
+import com.cs4523groupb11.Motify.entities.PublicChallenge;
 import com.cs4523groupb11.Motify.entities.User;
+import com.cs4523groupb11.Motify.entities.jpaprojections.UserIdProjection;
+import jakarta.annotation.Nonnull;
+import jakarta.servlet.http.PushBuilder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
-    Optional<User> findByUserId(String userId);
+f
+    Optional<User> findById(String id);
 
-    Optional<User> findByUsername(String username);
+    boolean existsById(String id);
 
-    Optional<User> findByEmail(String email);
+    Optional<UserIdProjection> findByUsername(String username);
 
-    Optional<User> findByUsernameAndPassword(String username, String password);
+    boolean existsByUsername(String username);
 
-    Optional<User> createUser(User user);
-    Optional<User> deleteUserByUserId(String userId);
-    Optional<User> updateUser(User user);
+    Optional<UserIdProjection> findByEmail(String email);
+
+    boolean existsByEmail(String email);
+
+    Optional<UserIdProjection> findByUsernameAndPassword(String username, String password);
+
+    boolean existsByUsernameAndPassword(String username, String password);
+
+    List<UserIdProjection> findAllByPublicChallengeListContaining(PublicChallenge pc);
+
+    void deleteById(String id);
 
 }

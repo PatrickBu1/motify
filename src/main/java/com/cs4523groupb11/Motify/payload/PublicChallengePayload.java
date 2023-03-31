@@ -1,31 +1,25 @@
-package com.cs4523groupb11.Motify.entities;
-
-import com.cs4523groupb11.Motify.repositories.PrivateChallengeRepository;
-import jakarta.persistence.*;
-import org.hibernate.annotations.Check;
+package com.cs4523groupb11.Motify.payload;
 
 import java.util.Date;
 import java.util.List;
 
-@Entity
-@Table(name = "private_challenges",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"owner", "name"})})
-public class PrivateChallenge {
+public class PublicChallengePayload {
     private String id;
-    private User owner;
+    private String owner;
     private String name;
     private String description;
-    private ChallengeCategory category;
+    private String category;
     private Date startDate;
     private Date endDate;
     private Integer objective;
-    private List<CheckInData> checkInDataList;
+    private List<String> checkInDataList;
+    private List<String> participants;
 
-    public PrivateChallenge(){
+    public PublicChallengePayload(){}
 
-    }
-    public PrivateChallenge(User owner, String name, String description, ChallengeCategory category, Date startDate,
-                            Date endDate, Integer objective, List<CheckInData> checkInDataList){
+    public PublicChallengePayload(String owner, String name, String description, String category,
+                                  Date startDate, Date endDate, Integer objective,
+                                  List<String> checkInDataList, List<String> participants){
         this.owner = owner;
         this.name = name;
         this.description = description;
@@ -34,10 +28,9 @@ public class PrivateChallenge {
         this.endDate = endDate;
         this.objective = objective;
         this.checkInDataList = checkInDataList;
+        this.participants = participants;
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     public String getId(){
         return id;
     }
@@ -45,16 +38,13 @@ public class PrivateChallenge {
         this.id = id;
     }
 
-    @ManyToOne()
-    @JoinColumn(name = "owner", nullable = false)
-    public User getOwner(){
+    public String getOwner(){
         return owner;
     }
-    public void setOwner(User owner){
+    public void setOwner(String owner){
         this.owner = owner;
     }
 
-    @Column(name="name", nullable = false)
     public String getName(){
         return name;
     }
@@ -62,7 +52,6 @@ public class PrivateChallenge {
         this.name = name;
     }
 
-    @Column(name="description")
     public String getDescription(){
         return description;
     }
@@ -70,11 +59,9 @@ public class PrivateChallenge {
         this.description = description;
     }
 
-    @Column(name="category")
-    public ChallengeCategory getCategory(){return category;}
-    public void setCategory(ChallengeCategory category){this.category = category;}
+    public String getCategory(){return category;}
+    public void setCategory(String category){this.category = category;}
 
-    @Column(name="start_date")
     public Date getStartDate(){
         return startDate;
     }
@@ -82,7 +69,6 @@ public class PrivateChallenge {
         this.startDate = startDate;
     }
 
-    @Column(name="end_date")
     public Date getEndDate(){
         return endDate;
     }
@@ -90,7 +76,6 @@ public class PrivateChallenge {
         this.endDate = endDate;
     }
 
-    @Column(name="objective")
     public Integer getObjective(){
         return objective;
     }
@@ -98,12 +83,17 @@ public class PrivateChallenge {
         this.objective = objective;
     }
 
-    @OneToMany(mappedBy = "private_challenge")
-    public List<CheckInData> getCheckInDataList(){
+    public List<String> getCheckInDataList(){
         return checkInDataList;
     }
-    public void setCheckInDataList(List<CheckInData> checkInDataList){
+    public void setCheckInDataList(List<String> checkInDataList){
         this.checkInDataList = checkInDataList;
     }
 
+    public List<String> getParticipants(){
+        return participants;
+    }
+    public void setParticipants(List<String> participants){
+        this.participants = participants;
+    }
 }

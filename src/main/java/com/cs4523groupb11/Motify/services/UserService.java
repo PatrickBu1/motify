@@ -3,13 +3,15 @@ package com.cs4523groupb11.Motify.services;
 
 import com.cs4523groupb11.Motify.entities.User;
 
+import java.util.Optional;
+
 public interface UserService {
-    public User findByUserId(String userId);
-    public User findByUsername(String username);
-    public User findByEmail(String email);
-    public User findByUsernameAndPassword(String username, String password);
-    public User createUser(User user);
-    public User deleteUser(String userid);
-    public User updateUser(User user);
+    Optional<User> findById(String userId);
+    Optional<String> findByUsername(String username);
+    Optional<String> findByEmail(String email);
+    Optional<String> findByUsernameAndPassword(String username, String password);
+    Optional<User> create(User user);
+    Optional<User> delete(String userid);
+    Optional<User> update(User user);
 
 }

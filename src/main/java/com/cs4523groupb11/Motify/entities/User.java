@@ -2,22 +2,34 @@ package com.cs4523groupb11.Motify.entities;
 
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.Check;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "user",
+@Table(name = "users",
         uniqueConstraints = {
         @UniqueConstraint(columnNames = "username"),
         @UniqueConstraint(columnNames = "email")
 })
 public class User{
     private String id;
+
     private String username;
+
     private String password;
+
     private String email;
+
     private Set<Role> roles = new HashSet<>();
+
+    private List<PrivateChallenge> privateChallengeList;
+
+    private List<PublicChallenge> publicChallengeList;
+
+    private List<CheckInData> checkInDataList;
 
     public User() {
 
@@ -48,7 +60,7 @@ public class User{
     public void setEmail(String email) {this.email = email;}
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_roles",
+    @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     public Set<Role> getRoles() {
@@ -58,9 +70,30 @@ public class User{
         this.roles = roles;
     }
 
-    @Override
-    public String toString(){
-        return "User [id=" + userId + ", username=" + username + ", password=" + password + ", email="
-                + email + "]";
+    @OneToMany(mappedBy = "users")
+    public List<PrivateChallenge> getPrivateChallengeList(){
+        return privateChallengeList;
+    }
+    public void setPrivateChallengeList(List<PrivateChallenge> privateChallengeList){
+        this.privateChallengeList = privateChallengeList;
+    }
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "users_public_challenges",
+                joinColumns = @JoinColumn("user_id"),
+                inverseJoinColumns = @JoinColumn("public_challenge_id"))
+    public List<PublicChallenge> getPublicChallengeList(){
+        return publicChallengeList;
+    }
+    public void setPublicChallengeList(List<PublicChallenge> publicChallengeList){
+        this.publicChallengeList = publicChallengeList;
+    }
+
+    @OneToMany(mappedBy = "users")
+    public List<CheckInData> getCheckInDataList(){
+        return checkInDataList;
+    }
+    public void setCheckInDataList(List<CheckInData> checkInDataList){
+        this.checkInDataList = checkInDataList;
     }
 }
