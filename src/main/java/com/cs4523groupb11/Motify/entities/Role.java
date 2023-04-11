@@ -1,14 +1,15 @@
 package com.cs4523groupb11.Motify.entities;
+import com.cs4523groupb11.Motify.entities.enums.RoleType;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "roles")
 public class Role {
     private Integer id;
-    private RoleEnum name;
+    private RoleType name;
 
     public Role(){}
-    public Role(RoleEnum name){
+    public Role(RoleType name){
         this.name = name;
     }
 
@@ -24,10 +25,10 @@ public class Role {
 
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
-    public RoleEnum getName() {
+    public RoleType getName() {
         return name;
     }
-    public void setName(RoleEnum name) {
+    public void setName(RoleType name) {
         this.name = name;
     }
 }

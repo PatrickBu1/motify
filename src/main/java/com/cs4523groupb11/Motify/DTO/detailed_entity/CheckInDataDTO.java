@@ -1,22 +1,22 @@
-package com.cs4523groupb11.Motify.entities;
+package com.cs4523groupb11.Motify.DTO.detailed_entity;
 
-import jakarta.persistence.*;
+
+import com.cs4523groupb11.Motify.entities.CheckInData;
 
 import java.util.Date;
 
-@Entity
-@Table(name="checkin_data")
-public class CheckInData {
+public class CheckInDataDTO {
     private String id;
-    private User user;
+    private String user;
     private String title;
     private String content;
     private Date date;
-    private Challenge challenge;
+    private String challenge;
 
-    public CheckInData(){}
-    public CheckInData(User user, String title, String content,
-                       Date date, Challenge challenge){
+    public CheckInDataDTO(){}
+    public CheckInDataDTO(String id, String user, String title, String content,
+                       Date date, String challenge){
+        this.id = id;
         this.user = user;
         this.title = title;
         this.content = content;
@@ -24,8 +24,7 @@ public class CheckInData {
         this.challenge = challenge;
     }
 
-    @Id
-    @GeneratedValue(strategy= GenerationType.UUID)
+
     public String getId(){
         return id;
     }
@@ -33,20 +32,16 @@ public class CheckInData {
         this.id = id;
     }
 
-    @ManyToOne()
-    @JoinColumn(name = "owner", nullable = false)
-    public User getUser(){
+    public String getUser(){
         return user;
     }
-    public void setOwner(User user){
+    public void setOwner(String user){
         this.user = user;
     }
 
-    @Column(name = "title")
     public String getTitle(){return title;}
     public void setTitle(String title){this.title = title;}
 
-    @Column(name = "content")
     public String getContent(){
         return content;
     }
@@ -54,7 +49,6 @@ public class CheckInData {
         this.content = content;
     }
 
-    @Column(name = "date", nullable = false)
     public Date getDate(){
         return date;
     }
@@ -62,12 +56,16 @@ public class CheckInData {
         this.date  = date;
     }
 
-    @ManyToOne()
-    @JoinColumn(name = "challenge_id")
-    public Challenge getChallenge(){
+    public String getChallenge(){
         return challenge;
     }
-    public void setChallenge(Challenge challenge) {
+    public void setChallenge(String challenge) {
         this.challenge = challenge;
     }
+
+    public static CheckInDataDTO fromEntity(CheckInData c){
+        return new CheckInDataDTO(c.getId(), c.getUser().getId(), c.getTitle(),
+                c.getContent(), c.getDate(), c.getChallenge().getId());
+    }
 }
+

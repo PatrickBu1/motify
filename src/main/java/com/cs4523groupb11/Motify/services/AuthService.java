@@ -1,7 +1,6 @@
 package com.cs4523groupb11.Motify.services;
 
-import com.cs4523groupb11.Motify.exceptions.UserExistsException;
-import com.cs4523groupb11.Motify.payload.response.LoginResponse;
+import com.cs4523groupb11.Motify.DTO.response_non_entity.LoginResponse;
 
 import java.util.List;
 import java.util.Optional;

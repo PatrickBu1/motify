@@ -1,54 +1,67 @@
 package com.cs4523groupb11.Motify.controllers;
 
+import com.cs4523groupb11.Motify.DTO.detailed_entity.UserDTO;
 import com.cs4523groupb11.Motify.entities.User;
+import com.cs4523groupb11.Motify.security.JwtTokenUtility;
 import com.cs4523groupb11.Motify.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/user")
+@PreAuthorize("hasRole('USER')")
 public class UserController {
 
     @Autowired
     private UserService userService;
 
-    @GetMapping("/findById/{id}")
-    public ResponseEntity<User> findById(@PathVariable String id){
-        Optional<User> user = userService.findById(id);
-        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    @Autowired
+    private JwtTokenUtility jwt;
+
+
+    @GetMapping("/getSelf")
+    public ResponseEntity<UserDTO> getSelf(@RequestHeader(name="Authorization") String auth){
+        String username = jwt.getUsernameFromJwtToken(jwt.getFromHeader(auth));
+        Optional<User> opUser = userService.findByUsername(username);
+        if (opUser.isPresent()) {
+            UserDTO response = UserDTO.fromEntity(opUser.get());
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/getOneById/{id}")
+    public ResponseEntity<UserDTO> getOneById(@PathVariable String id){
+        Optional<User> opUser = userService.findById(id);
+        return opUser.map(user -> ResponseEntity.ok( UserDTO.fromEntity(user)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/getListByIds")
+    public ResponseEntity<List<UserDTO>> getListById(@RequestBody List<String> idList){
+        List<User> userList = userService.findListByIds(idList);
+        if (userList.isEmpty()) {return ResponseEntity.notFound().build();}
+        List<UserDTO> res = userList.stream().map(UserDTO::fromEntity).toList();
+        return ResponseEntity.ok(res);
     }
 
     @GetMapping("/findByUsername/{username}")
-    public ResponseEntity<String> findByUsername(@PathVariable String username){
-        Optional<String> user = userService.findByUsername(username);
-        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<UserDTO> findByUsername(@PathVariable String username){
+        Optional<User> opUser = userService.findByUsername(username);
+        return opUser.map(user -> ResponseEntity.ok(UserDTO.fromEntity(user)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/findByEmail/{email}")
-    public ResponseEntity<String> findByEmail(@PathVariable String email){
-        Optional<String> user = userService.findByEmail(email);
-        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @PostMapping("/create")
-    public ResponseEntity<User> create(@RequestBody User body){
-        Optional<User> user = userService.create(body);
-        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());
-    }
-
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<User> delete(@PathVariable String id){
-        Optional<User> user = userService.delete(id);
-        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @PutMapping("/update")
-    public ResponseEntity<?> update(@RequestBody User body){
-        Optional<User> user = userService.update(body);
-        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    @GetMapping("/findOtherByEmail/{email}")
+    public ResponseEntity<UserDTO> findByEmail(@PathVariable String email){
+        Optional<User> opUser = userService.findByEmail(email);
+        return opUser.map(user -> ResponseEntity.ok(UserDTO.fromEntity(user)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
 }

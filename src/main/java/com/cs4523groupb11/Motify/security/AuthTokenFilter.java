@@ -1,6 +1,6 @@
 package com.cs4523groupb11.Motify.security;
 
-import com.cs4523groupb11.Motify.security.services.UserDetailsServiceImpl;
+import com.cs4523groupb11.Motify.services.impl.UserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

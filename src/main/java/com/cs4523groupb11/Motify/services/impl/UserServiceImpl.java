@@ -1,7 +1,8 @@
 package com.cs4523groupb11.Motify.services.impl;
 
+import com.cs4523groupb11.Motify.DTO.detailed_entity.UserDTO;
 import com.cs4523groupb11.Motify.entities.User;
-import com.cs4523groupb11.Motify.entities.jpaprojections.UserIdProjection;
+import com.cs4523groupb11.Motify.exceptions.InvalidDataException;
 import com.cs4523groupb11.Motify.repositories.UserRepository;
 import com.cs4523groupb11.Motify.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,47 +24,20 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(userId);
     }
 
-    public Optional<String> findByUsername(String username){
-        Optional<UserIdProjection> opProj = userRepository.findByUsername(username);
-        return opProj.map(UserIdProjection::getId);
-    }
-
-    public Optional<String> findByEmail(String email){
-        Optional<UserIdProjection> opProj = userRepository.findByEmail(email);
-        return opProj.map(UserIdProjection::getId);
-    }
-
-    public Optional<String> findByUsernameAndPassword(String username, String password){
-        Optional<UserIdProjection> opProj = userRepository.findByUsernameAndPassword(username, password);
-        return opProj.map(UserIdProjection::getId);
-    }
-
-    @Transactional
-    public Optional<User> create(User user){
-        if (userRepository.existsById(user.getId())){
-            return Optional.empty();
+    public List<User> findListByIds(List<String> idList){
+        List<User> userList = userRepository.findAllByIdIn(idList);
+        if (userList.size() != idList.size()){
+            return Collections.emptyList();
         }
-        return Optional.of(userRepository.save(user));
+        return userList;
     }
 
-    @Transactional
-    public Optional<User> delete(String userId) {
-        Optional<User> opUser = userRepository.findById(userId);
-        if (opUser.isPresent()){
-            userRepository.deleteById(userId);
-            return opUser;
-        }
-        return Optional.empty();
+    public Optional<User> findByUsername(String username){
+        return userRepository.findByUsername(username);
     }
 
-    @Transactional
-    public Optional<User> update(User user){
-        User resUser;
-        try{
-            resUser = userRepository.saveAndFlush(user);
-        }catch(DataIntegrityViolationException e){
-            return Optional.empty();
-        }
-        return Optional.of(resUser);
+    public Optional<User> findByEmail(String email){
+        return userRepository.findByEmail(email);
     }
+
 }
