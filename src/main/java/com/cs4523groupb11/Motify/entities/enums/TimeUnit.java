@@ -1,11 +1,11 @@
 package com.cs4523groupb11.Motify.entities.enums;
 
 public enum TimeUnit {
-    MINUTE("Minute"),
-    HOUR("Hour"),
-    DAY("Day"),
-    WEEK("Week"),
-    MONTH("Month");
+    MINUTE("MINUTE"),
+    HOUR("HOUR"),
+    DAY("DAY"),
+    WEEK("WEEK"),
+    MONTH("MONTH");
 
     private final String unit;
 

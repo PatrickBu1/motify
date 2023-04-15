@@ -15,7 +15,11 @@ public class Participation {
 
     private Challenge challenge;
 
-    private Boolean isProgressBased;    // if not progress-based, then it's based on completed dates nad streak
+    private Boolean isPrivate;
+
+    private Boolean isGoal;    // if goal, then based on progress; else it's based on completed dates and streak
+
+    private Boolean isActive;
 
     private Integer progress;
 
@@ -25,11 +29,12 @@ public class Participation {
 
     public Participation(){}
 
-    public Participation(User user, Challenge challenge, Boolean isProgressBased,
+    public Participation(User user, Challenge challenge, Boolean isGoal, Boolean isActive,
                          Integer progress, List<Date> completedDates, Integer streak){
         this.user = user;
         this.challenge = challenge;
-        this.isProgressBased = isProgressBased;
+        this.isGoal = isGoal;
+        this.isActive = isActive;
         this.progress = progress;
         this.completedDates = completedDates;
         this.streak = streak;
@@ -50,9 +55,17 @@ public class Participation {
     public Challenge getChallenge() {return challenge;}
     public void setChallenge(Challenge challenge) {this.challenge = challenge;}
 
+    @Column(name="is_private", nullable = false)
+    public Boolean getIsPrivate() {return isPrivate;}
+    public void setIsPrivate(Boolean aPrivate) {isPrivate = aPrivate;}
+
     @Column(name="is_progress_based", nullable = false)
-    public Boolean getIsProgressBased(){return isProgressBased;}
-    public void setIsProgressBased(Boolean isProgressBased){this.isProgressBased = isProgressBased;}
+    public Boolean getIsGoal(){return isGoal;}
+    public void setIsGoal(Boolean isProgressBased){this.isGoal = isProgressBased;}
+
+    @Column(name="is_active", nullable=false)
+    public Boolean getIsActive() {return isActive;}
+    public void setIsActive(Boolean active) {isActive = active;}
 
     @Column(name = "progress", nullable = false)
     public Integer getProgress() {return progress;}

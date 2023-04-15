@@ -24,7 +24,7 @@ public interface ChallengeRepository extends JpaRepository<Challenge, String> {
 
         boolean existsById(String id);
 
-        boolean existsByOwnerAndName(User user, String Name);
+        // boolean existsByOwnerAndName(User user, String Name);
 
         void deleteById(String id);
 

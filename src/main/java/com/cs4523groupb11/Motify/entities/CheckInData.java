@@ -5,7 +5,8 @@ import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name="checkin_data")
+@Table(name="checkin_data",
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"user", "challenge", "date"})})
 public class CheckInData {
     private String id;
     private User user;
@@ -38,15 +39,15 @@ public class CheckInData {
     public User getUser(){
         return user;
     }
-    public void setOwner(User user){
+    public void setUser(User user){
         this.user = user;
     }
 
-    @Column(name = "title")
+    @Column(name = "title", nullable = false)
     public String getTitle(){return title;}
     public void setTitle(String title){this.title = title;}
 
-    @Column(name = "content")
+    @Column(name = "content", nullable = false)
     public String getContent(){
         return content;
     }

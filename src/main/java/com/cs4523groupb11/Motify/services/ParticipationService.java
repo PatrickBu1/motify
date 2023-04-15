@@ -12,14 +12,14 @@ import java.util.Optional;
 public interface ParticipationService {
     Optional<List<Participation>> getAllParticipationByUsername(String username, Boolean isPrivate);
 
-    Optional<List<Participation>> getAllParticipationByUserId(String id);
+    Optional<List<Participation>> getAllParticipationByUserId(String id, Boolean isPrivate);
 
     Optional<Participation> getOneParticipationByUsernameAndChallengeId(String username, String challengeId);
 
     Optional<List<User>> getParticipantsByPublicChallengeId(String id);
 
-    void joinPublicChallenge(String username, String pcId) throws NoSuchElementException;
+    void addParticipationEntry(String username, String pcId) throws NoSuchElementException;
 
-    void quitPublicChallenge(String username, String pcId) throws NoSuchElementException;
+    void deleteParticipationEntry(String username, String pcId) throws NoSuchElementException;
 
 }

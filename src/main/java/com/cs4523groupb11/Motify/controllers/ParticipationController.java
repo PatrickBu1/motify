@@ -1,8 +1,7 @@
 package com.cs4523groupb11.Motify.controllers;
 
-import com.cs4523groupb11.Motify.DTO.ParticipationDTO;
+import com.cs4523groupb11.Motify.DTO.detailed_entity.ParticipationDTO;
 import com.cs4523groupb11.Motify.DTO.detailed_entity.UserDTO;
-import com.cs4523groupb11.Motify.entities.Challenge;
 import com.cs4523groupb11.Motify.entities.Participation;
 import com.cs4523groupb11.Motify.entities.User;
 import com.cs4523groupb11.Motify.security.JwtTokenUtility;
@@ -59,7 +58,7 @@ public class ParticipationController {
 
     @GetMapping("getJoinedChallengesByUserId/{id}")
     public ResponseEntity<List<String>> getJoinedPublicChallengesByUserId(@PathVariable String id){
-        Optional<List<Participation>> opList = participationService.getAllParticipationByUserId(id);
+        Optional<List<Participation>> opList = participationService.getAllParticipationByUserId(id, false);
         return opList.map(participations -> ResponseEntity.ok(participations.stream()
                 .map(p -> p.getChallenge().getId()).toList()))
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -77,7 +76,7 @@ public class ParticipationController {
                                                          @PathVariable String id){
         String username = jwt.getUsernameFromJwtToken(jwt.getFromHeader(auth));
         try{
-            participationService.joinPublicChallenge(username, id);
+            participationService.addParticipationEntry(username, id);
         }catch (NoSuchElementException e){
             return ResponseEntity.badRequest().build();
         }
@@ -89,7 +88,7 @@ public class ParticipationController {
                                                          @PathVariable String id){
         String username = jwt.getUsernameFromJwtToken(jwt.getFromHeader(auth));
         try{
-            participationService.quitPublicChallenge(username, id);
+            participationService.deleteParticipationEntry(username, id);
         }catch (NoSuchElementException e){
             return ResponseEntity.badRequest().build();
         }

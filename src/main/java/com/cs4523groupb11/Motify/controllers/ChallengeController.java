@@ -79,9 +79,10 @@ public class ChallengeController {
     returns 400 if name + owner pair exists in database.
      */
     @PostMapping("/create")
-    public ResponseEntity<String> create(@RequestBody ChallengeDTO challengeDTO){
-        Challenge challenge = ChallengeDTO.toEntity(challengeDTO);
-        Optional<String> opId = challengeService.create(challenge);
+    public ResponseEntity<String> create(@RequestHeader(name = "Authorization") String auth,
+                                         @RequestBody ChallengeDTO challengeDTO){
+        String username = jwt.getUsernameFromJwtToken(jwt.getFromHeader(auth));
+        Optional<String> opId = challengeService.create(username, challengeDTO);
         return opId.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
@@ -90,9 +91,10 @@ public class ChallengeController {
     returns 400 if name + owner pair exists in database after modification.
      */
     @PutMapping("/update")
-    public ResponseEntity<String> update(@RequestBody ChallengeDTO challengeDTO){
-        Challenge challenge = ChallengeDTO.toEntity(challengeDTO);
-        Optional<String> opId = challengeService.update(challenge);
+    public ResponseEntity<String> update(@RequestHeader(name = "Authorization") String auth,
+                                         @RequestBody ChallengeDTO challengeDTO){
+        String username = jwt.getUsernameFromJwtToken(jwt.getFromHeader(auth));
+        Optional<String> opId = challengeService.update(username, challengeDTO);
         return opId.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
@@ -101,9 +103,11 @@ public class ChallengeController {
     returns 400 if ID is not found or the user has no permission to update.
      */
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> delete(@PathVariable String id){
+    public ResponseEntity<Void> delete(@RequestHeader(name = "Authorization") String auth,
+                                       @PathVariable String id){
+        String username = jwt.getUsernameFromJwtToken(jwt.getFromHeader(auth));
         try{
-            challengeService.delete(id);
+            challengeService.delete(username, id);
         }catch (NoSuchElementException e){
             ResponseEntity.badRequest().build();
         }

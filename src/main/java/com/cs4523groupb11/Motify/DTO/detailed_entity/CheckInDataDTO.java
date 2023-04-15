@@ -7,7 +7,7 @@ import java.util.Date;
 
 public class CheckInDataDTO {
     private String id;
-    private String user;
+    private String username;
     private String title;
     private String content;
     private Date date;
@@ -17,7 +17,7 @@ public class CheckInDataDTO {
     public CheckInDataDTO(String id, String user, String title, String content,
                        Date date, String challenge){
         this.id = id;
-        this.user = user;
+        this.username = user;
         this.title = title;
         this.content = content;
         this.date = date;
@@ -33,10 +33,10 @@ public class CheckInDataDTO {
     }
 
     public String getUser(){
-        return user;
+        return username;
     }
     public void setOwner(String user){
-        this.user = user;
+        this.username = user;
     }
 
     public String getTitle(){return title;}
@@ -64,7 +64,7 @@ public class CheckInDataDTO {
     }
 
     public static CheckInDataDTO fromEntity(CheckInData c){
-        return new CheckInDataDTO(c.getId(), c.getUser().getId(), c.getTitle(),
+        return new CheckInDataDTO(c.getId(), c.getUser().getUsername(), c.getTitle(),
                 c.getContent(), c.getDate(), c.getChallenge().getId());
     }
 }

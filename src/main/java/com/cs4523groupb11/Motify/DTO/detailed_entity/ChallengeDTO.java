@@ -89,9 +89,5 @@ public class ChallengeDTO {
                 ChallengeContentDTO.fromEntity(c.getContent()), c.getCreatedAt());
     }
 
-    public static Challenge toEntity(ChallengeDTO cDTO){
-        // TODO
-        return new Challenge();
-    }
 
 }

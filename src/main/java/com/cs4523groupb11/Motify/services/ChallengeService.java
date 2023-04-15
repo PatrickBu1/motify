@@ -1,5 +1,6 @@
 package com.cs4523groupb11.Motify.services;
 
+import com.cs4523groupb11.Motify.DTO.detailed_entity.ChallengeDTO;
 import com.cs4523groupb11.Motify.entities.Challenge;
 import org.springframework.data.domain.Page;
 
@@ -16,10 +17,10 @@ public interface ChallengeService {
 
     public Optional<List<Challenge>> getAllPublicChallengesByOwner(String id);
 
-    public Optional<String> create(Challenge c);
+    public Optional<String> create(String username, ChallengeDTO c);
 
-    public Optional<String> update(Challenge c);
+    public Optional<String> update(String username, ChallengeDTO c);
 
-    public void delete(String id) throws NoSuchElementException;
+    public void delete(String username, String id) throws NoSuchElementException;
 
 }

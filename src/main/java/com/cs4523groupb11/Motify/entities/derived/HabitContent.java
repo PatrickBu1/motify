@@ -38,22 +38,22 @@ public class HabitContent extends ChallengeContent {
     @Override
     public void setId(String id) {this.habitId = id;}
 
-    @Column(name = "frequency")
+    @Column(name = "frequency", nullable = false)
     public TimeUnit getFrequency() {return frequency;}
     public void setFrequency(TimeUnit frequency) {this.frequency = frequency;}
 
 
-    @Column(name = "is_time_bound")
+    @Column(name = "is_time_bound", nullable = false)
     public Boolean getTimeBound() {return isTimeBound;}
     public void setTimeBound(Boolean timeBound) {
         isTimeBound = timeBound;
     }
 
-    @Column(name="start_date")
+    @Column(name="start_date", nullable = false)
     public Date getStartDate() {return startDate;}
     public void setStartDate(Date startDate) {this.startDate = startDate;}
 
-    @Column(name="end_date")
+    @Column(name="end_date", nullable = false)
     public Date getEndDate() {return endDate;}
     public void setEndDate(Date endDate) {this.endDate = endDate;}
 }

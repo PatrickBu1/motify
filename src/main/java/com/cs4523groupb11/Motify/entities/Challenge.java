@@ -29,9 +29,8 @@ public class Challenge {
 
     public Challenge(){}
 
-    public Challenge(String id, User owner, String name, String description, Boolean isPrivate,
+    public Challenge(User owner, String name, String description, Boolean isPrivate,
                      ChallengeCategory category, ChallengeContent content, Date createdAt){
-        this.id = id;
         this.owner = owner;
         this.name = name;
         this.description = description;
@@ -80,7 +79,7 @@ public class Challenge {
     public ChallengeContent getContent() {return content;}
     public void setContent(ChallengeContent content){this.content = content;}
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false)
     public Date getCreatedAt() { return createdAt;}
     public void setCreatedAt(Date createdAt) { this.createdAt = createdAt;}
 
