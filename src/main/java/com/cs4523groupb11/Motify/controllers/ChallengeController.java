@@ -20,11 +20,16 @@ import java.util.Optional;
 @PreAuthorize("hasRole('USER')")
 public class ChallengeController {
 
-    @Autowired
-    private ChallengeService challengeService;
+    private final ChallengeService challengeService;
+
+    private final JwtTokenUtility jwt;
 
     @Autowired
-    private JwtTokenUtility jwt;
+    public ChallengeController(ChallengeService challengeService, JwtTokenUtility jwt) {
+        this.challengeService = challengeService;
+        this.jwt = jwt;
+    }
+
 
     /*
     Get one challenge by ID.

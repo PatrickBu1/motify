@@ -18,11 +18,15 @@ import java.util.Optional;
 @RequestMapping("/api/userChallenge")
 public class ParticipationController {
 
-    @Autowired
-    private ParticipationService participationService;
+    private final ParticipationService participationService;
+
+    private final JwtTokenUtility jwt;
 
     @Autowired
-    private JwtTokenUtility jwt;
+    public ParticipationController(ParticipationService participationService, JwtTokenUtility jwt) {
+        this.participationService = participationService;
+        this.jwt = jwt;
+    }
 
     @GetMapping("/getAllSelfPublicParticipation")
     public ResponseEntity<List<ParticipationDTO>> getAllSelfPublicParticipation(
@@ -71,7 +75,7 @@ public class ParticipationController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping("/join/{userId}/{id}")
+    @PostMapping("/join/{id}")
     public ResponseEntity<Void> joinPublicChallenge(@RequestHeader(name = "Authorization") String auth,
                                                          @PathVariable String id){
         String username = jwt.getUsernameFromJwtToken(jwt.getFromHeader(auth));
@@ -83,7 +87,7 @@ public class ParticipationController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/exit/{userId}/{id}")
+    @PostMapping("/exit/{id}")
     public ResponseEntity<Void> quitPublicChallenge(@RequestHeader(name = "Authorization") String auth,
                                                          @PathVariable String id){
         String username = jwt.getUsernameFromJwtToken(jwt.getFromHeader(auth));

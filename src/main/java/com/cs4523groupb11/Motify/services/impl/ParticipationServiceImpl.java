@@ -18,14 +18,19 @@ import java.util.*;
 @Service
 public class ParticipationServiceImpl implements ParticipationService {
 
-    @Autowired
-    ParticipationRepository participationRepository;
+    private final ParticipationRepository participationRepository;
+
+    private final UserRepository userRepository;
+
+    private final ChallengeRepository challengeRepository;
+
 
     @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    ChallengeRepository challengeRepository;
+    public ParticipationServiceImpl(ParticipationRepository participationRepository, UserRepository userRepository, ChallengeRepository challengeRepository) {
+        this.participationRepository = participationRepository;
+        this.userRepository = userRepository;
+        this.challengeRepository = challengeRepository;
+    }
 
 
     @Transactional

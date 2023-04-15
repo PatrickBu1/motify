@@ -35,11 +35,15 @@ import java.util.Optional;
 
 @Service
 public class ChallengeServiceImpl implements ChallengeService {
-    @Autowired
-    ChallengeRepository challengeRepository;
+    private final ChallengeRepository challengeRepository;
+
+    private final UserRepository userRepository;
 
     @Autowired
-    UserRepository userRepository;
+    public ChallengeServiceImpl(ChallengeRepository challengeRepository, UserRepository userRepository) {
+        this.challengeRepository = challengeRepository;
+        this.userRepository = userRepository;
+    }
 
     @Transactional
     public Optional<Challenge> getById(String id, String username){

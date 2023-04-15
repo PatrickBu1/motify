@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.*;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,11 +18,15 @@ import java.util.Optional;
 @PreAuthorize("hasRole('USER')")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    private final JwtTokenUtility jwt;
 
     @Autowired
-    private JwtTokenUtility jwt;
+    public UserController(UserService userService, JwtTokenUtility jwt){
+        this.userService = userService;
+        this.jwt = jwt;
+    }
 
 
     @GetMapping("/getSelf")

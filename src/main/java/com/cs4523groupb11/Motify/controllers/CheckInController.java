@@ -20,11 +20,15 @@ import java.util.Optional;
 @PreAuthorize("hasRole('USER')")
 public class CheckInController {
 
-    @Autowired
-    CheckInService checkInService;
+    private final CheckInService checkInService;
+
+    private final JwtTokenUtility jwt;
 
     @Autowired
-    JwtTokenUtility jwt;
+    public CheckInController(CheckInService checkInService, JwtTokenUtility jwt) {
+        this.checkInService = checkInService;
+        this.jwt = jwt;
+    }
 
 
     @GetMapping("/getPageByChallengeId/{id}/{page}/{size}")
@@ -73,10 +77,5 @@ public class CheckInController {
         }
         return ResponseEntity.ok().build();
     }
-
-
-
-
-
 
 }

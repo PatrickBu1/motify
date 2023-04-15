@@ -25,14 +25,19 @@ import java.util.Optional;
 @Service
 public class CheckInServiceImpl implements CheckInService {
 
-    @Autowired
-    CheckInDataRepository checkInDataRepository;
+    private final CheckInDataRepository checkInDataRepository;
+
+    private final ChallengeRepository challengeRepository;
+
+    private final UserRepository userRepository;
 
     @Autowired
-    ChallengeRepository challengeRepository;
+    public CheckInServiceImpl(CheckInDataRepository checkInDataRepository, ChallengeRepository challengeRepository, UserRepository userRepository) {
+        this.checkInDataRepository = checkInDataRepository;
+        this.challengeRepository = challengeRepository;
+        this.userRepository = userRepository;
+    }
 
-    @Autowired
-    UserRepository userRepository;
 
     @Transactional
     public Optional<Page<CheckInData>> getPageByChallengeId(String username, String id, Integer page, Integer size){
