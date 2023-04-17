@@ -7,7 +7,7 @@ import java.util.List;
 
 public class ParticipationDTO {
 
-    private String user;
+    private String owner;
 
     private String challenge;
 
@@ -25,9 +25,9 @@ public class ParticipationDTO {
 
     public ParticipationDTO(){}
 
-    public ParticipationDTO(String user, String challenge, Boolean isPrivate, Boolean isGoal,
-                         Boolean isActive, Integer progress, List<Date> completedDates, Integer streak){
-        this.user = user;
+    public ParticipationDTO(String owner, String challenge, Boolean isPrivate, Boolean isGoal,
+                            Boolean isActive, Integer progress, List<Date> completedDates, Integer streak){
+        this.owner = owner;
         this.challenge = challenge;
         this.isPrivate = isPrivate;
         this.isGoal = isGoal;
@@ -37,8 +37,8 @@ public class ParticipationDTO {
         this.streak = streak;
     }
 
-    public String getUser() {return user;}
-    public void setUser(String user) {this.user = user;}
+    public String getOwner() {return owner;}
+    public void setOwner(String owner) {this.owner = owner;}
 
     public String getChallenge() {return challenge;}
     public void setChallenge(String challenge) {this.challenge = challenge;}
@@ -67,7 +67,7 @@ public class ParticipationDTO {
     }
 
     public static ParticipationDTO fromEntity(Participation p){
-        return new ParticipationDTO(p.getUser().getId(),
+        return new ParticipationDTO(p.getOwner().getId(),
                 p.getChallenge().getId(),
                 p.getIsPrivate(),
                 p.getIsGoal(),

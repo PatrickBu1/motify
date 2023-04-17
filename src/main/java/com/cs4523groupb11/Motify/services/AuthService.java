@@ -7,8 +7,8 @@ import java.util.Optional;
 
 public interface AuthService {
 
-    public Optional<LoginResponse> authenticateUser(String username, String password);
+    Optional<LoginResponse> authenticateUser(String username, String password);
 
-    public Optional<LoginResponse> registerUser(String username,  String email, String password, List<String> roles);
+    Boolean registerUser(String username,  String email, String password, List<String> roles);
 
 }

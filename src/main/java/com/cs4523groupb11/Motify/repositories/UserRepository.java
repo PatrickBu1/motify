@@ -1,12 +1,14 @@
 package com.cs4523groupb11.Motify.repositories;
 
 import com.cs4523groupb11.Motify.entities.User;
+import io.micrometer.common.lang.NonNullApi;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
+@NonNullApi
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
 

@@ -75,7 +75,8 @@ public class Challenge {
     public ChallengeCategory getCategory(){return category;}
     public void setCategory(ChallengeCategory category){this.category = category;}
 
-    @OneToOne(mappedBy = "challenge", cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "content")
     public ChallengeContent getContent() {return content;}
     public void setContent(ChallengeContent content){this.content = content;}
 

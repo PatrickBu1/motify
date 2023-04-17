@@ -37,14 +37,14 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@Validated @RequestBody SignupRequest signupRequest){
+    public ResponseEntity<MessageResponse> signup(@Validated @RequestBody SignupRequest signupRequest){
         String username = signupRequest.getUsername();
         String email = signupRequest.getEmail();
         String password = signupRequest.getPassword();
         // List<String> roles = signupRequest.getRole();
-        Optional<LoginResponse> response = authService.registerUser(username, email, password, null);
-        if (response.isPresent()){
-            return ResponseEntity.ok(response.get());
+        Boolean ok = authService.registerUser(username, email, password, null);
+        if (ok){
+            return ResponseEntity.ok(new MessageResponse("Signup Successful"));
         }
         return ResponseEntity.badRequest().body(new MessageResponse("Username or Email Already Exists"));
     }

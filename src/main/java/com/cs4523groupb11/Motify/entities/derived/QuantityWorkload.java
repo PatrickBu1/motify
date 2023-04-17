@@ -4,9 +4,9 @@ import com.cs4523groupb11.Motify.entities.abstraction.ChallengeWorkload;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "quantity_workload")
+@PrimaryKeyJoinColumn(name = "quantity_workload_id")
 public class QuantityWorkload extends ChallengeWorkload {
-    private String id;
+    //private String quantity_id;
 
     private String unit;
 
@@ -16,13 +16,6 @@ public class QuantityWorkload extends ChallengeWorkload {
         this.amount = amount;
         this.unit = unit;
     }
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Override
-    public String getId(){return id;}
-    @Override
-    public void setId(String id){this.id = id;}
 
     @Column(name="unit", nullable = false)
     public String getUnit() {return unit;}

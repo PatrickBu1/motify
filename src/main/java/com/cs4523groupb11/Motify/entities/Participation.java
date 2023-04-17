@@ -7,11 +7,11 @@ import java.util.List;
 
 @Entity
 @Table(name = "participation",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"user", "challenge"})})
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"owner", "challenge"})})
 public class Participation {
     private String id;
 
-    private User user;
+    private User owner;
 
     private Challenge challenge;
 
@@ -29,9 +29,9 @@ public class Participation {
 
     public Participation(){}
 
-    public Participation(User user, Challenge challenge, Boolean isGoal, Boolean isActive,
+    public Participation(User owner, Challenge challenge, Boolean isGoal, Boolean isActive,
                          Integer progress, List<Date> completedDates, Integer streak){
-        this.user = user;
+        this.owner = owner;
         this.challenge = challenge;
         this.isGoal = isGoal;
         this.isActive = isActive;
@@ -46,9 +46,9 @@ public class Participation {
     public void setId(String id){this.id = id;}
 
     @ManyToOne
-    @JoinColumn(name = "user", nullable = false)
-    public User getUser() {return user;}
-    public void setUser(User user) {this.user = user;}
+    @JoinColumn(name = "owner", nullable = false)
+    public User getOwner() {return owner;}
+    public void setOwner(User owner) {this.owner = owner;}
 
     @ManyToOne
     @JoinColumn(name = "challenge", nullable = false)

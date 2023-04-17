@@ -37,7 +37,7 @@ public class ParticipationServiceImpl implements ParticipationService {
     public Optional<List<Participation>> getAllParticipationByUsername(String username, Boolean isPrivate){
         Optional<User> opUser = userRepository.findByUsername(username);
         if (opUser.isEmpty()) {return Optional.empty();}
-        List<Participation> res = participationRepository.findAllByUserAndIsPrivate(opUser.get(), isPrivate);
+        List<Participation> res = participationRepository.findAllByOwnerAndIsPrivate(opUser.get(), isPrivate);
         return Optional.of(res);
     }
 
@@ -45,7 +45,7 @@ public class ParticipationServiceImpl implements ParticipationService {
     public Optional<List<Participation>> getAllParticipationByUserId(String id, Boolean isPrivate){
         Optional<User> opUser = userRepository.findById(id);
         if (opUser.isEmpty()) {return Optional.empty();}
-        List<Participation> res = participationRepository.findAllByUserAndIsPrivate(opUser.get(), isPrivate);
+        List<Participation> res = participationRepository.findAllByOwnerAndIsPrivate(opUser.get(), isPrivate);
         return Optional.of(res);
     }
 
@@ -54,7 +54,7 @@ public class ParticipationServiceImpl implements ParticipationService {
         Optional<User> opUser = userRepository.findByUsername(username);
         Optional<Challenge> opChallenge = challengeRepository.findById(cid);
         if (opUser.isEmpty() || opChallenge.isEmpty()) {return Optional.empty();}
-        return participationRepository.findByUserAndChallenge(opUser.get(), opChallenge.get());
+        return participationRepository.findByOwnerAndChallenge(opUser.get(), opChallenge.get());
     }
 
     @Transactional
@@ -83,7 +83,7 @@ public class ParticipationServiceImpl implements ParticipationService {
         Optional<User> opUser = userRepository.findById(userId);
         Optional<Challenge> opChallenge = challengeRepository.findById(cid);
         if (opUser.isEmpty() || opChallenge.isEmpty()) { throw new NoSuchElementException();}
-        participationRepository.deleteByUserAndChallenge(opUser.get(), opChallenge.get());
+        participationRepository.deleteByOwnerAndChallenge(opUser.get(), opChallenge.get());
     }
 
 }

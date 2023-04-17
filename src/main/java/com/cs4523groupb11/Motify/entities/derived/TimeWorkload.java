@@ -5,28 +5,21 @@ import com.cs4523groupb11.Motify.entities.enums.TimeUnit;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "time_workload")
+@PrimaryKeyJoinColumn(name = "time_workload_id")
 public class TimeWorkload extends ChallengeWorkload {
-    private String id;
+    //private String id;
 
-    private TimeUnit unit;
+    private TimeUnit timeUnit;
 
 
     public TimeWorkload(){}
 
-    public TimeWorkload(Integer amount, TimeUnit unit){
+    public TimeWorkload(Integer amount, TimeUnit timeUnit){
         this.amount = amount;
-        this.unit = unit;
+        this.timeUnit = timeUnit;
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Override
-    public String getId(){return id;}
-    @Override
-    public void setId(String id){this.id = id;}
-
-    @Column(name="unit", nullable = false)
-    public TimeUnit getUnit() {return unit;}
-    public void setUnit(TimeUnit unit) { this.unit = unit;}
+    @Column(name="time_unit", nullable = false)
+    public TimeUnit getTimeUnit() {return timeUnit;}
+    public void setTimeUnit(TimeUnit unit) { this.timeUnit = unit;}
 }

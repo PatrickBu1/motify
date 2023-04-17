@@ -16,7 +16,8 @@ public abstract class ChallengeContent {
     public void setId(String id){this.id = id;}
 
 
-    @OneToOne(mappedBy = "challenge_content")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "workload_id")
     public ChallengeWorkload getWorkload() {return workload;}
     public void setWorkload(ChallengeWorkload workload) {
         this.workload = workload;

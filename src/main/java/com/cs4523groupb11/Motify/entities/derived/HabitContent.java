@@ -8,10 +8,10 @@ import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "habit")
+@PrimaryKeyJoinColumn(name = "habit_content_id")
 public class HabitContent extends ChallengeContent {
 
-    private String habitId;
+    //private String habitId;
 
     private TimeUnit frequency;
 
@@ -31,12 +31,6 @@ public class HabitContent extends ChallengeContent {
         this.startDate = startDate;
         this.endDate = endDate;
     }
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Override
-    public String getId() {return habitId;}
-    @Override
-    public void setId(String id) {this.habitId = id;}
 
     @Column(name = "frequency", nullable = false)
     public TimeUnit getFrequency() {return frequency;}
@@ -49,11 +43,11 @@ public class HabitContent extends ChallengeContent {
         isTimeBound = timeBound;
     }
 
-    @Column(name="start_date", nullable = false)
+    @Column(name="start_date")
     public Date getStartDate() {return startDate;}
     public void setStartDate(Date startDate) {this.startDate = startDate;}
 
-    @Column(name="end_date", nullable = false)
+    @Column(name="end_date")
     public Date getEndDate() {return endDate;}
     public void setEndDate(Date endDate) {this.endDate = endDate;}
 }

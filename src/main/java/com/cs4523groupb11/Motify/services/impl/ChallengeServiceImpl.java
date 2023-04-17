@@ -89,7 +89,7 @@ public class ChallengeServiceImpl implements ChallengeService {
         if (cwDto instanceof QuantityWorkloadDTO){
             cw = new QuantityWorkload(cwDto.getAmount(), ((QuantityWorkloadDTO) cwDto).getUnit());
         }else{
-            cw = new TimeWorkload(cwDto.getAmount(), TimeUnit.valueOf(((TimeWorkloadDTO) cwDto).getUnit()));
+            cw = new TimeWorkload(cwDto.getAmount(), TimeUnit.valueOf(((TimeWorkloadDTO) cwDto).getTimeUnit()));
         }
         if (ccDto instanceof HabitContentDTO){
             cc = new HabitContent(cw, TimeUnit.valueOf(((HabitContentDTO) ccDto).getFrequency()),
@@ -99,7 +99,7 @@ public class ChallengeServiceImpl implements ChallengeService {
             cc = new GoalContent(cw);
         }
         Challenge c = new Challenge(opUser.get(), dto.getName(), dto.getDescription(), dto.getPrivate(),
-                ChallengeCategory.valueOf(dto.getCategory()), cc, dto.getCreatedAt());
+                ChallengeCategory.valueOf(dto.getCategory()), cc, new Date());
         Challenge saved;
         try{
             saved = challengeRepository.saveAndFlush(c);
@@ -126,7 +126,7 @@ public class ChallengeServiceImpl implements ChallengeService {
         if (cwDto instanceof QuantityWorkloadDTO){
             cw = new QuantityWorkload(cwDto.getAmount(), ((QuantityWorkloadDTO) cwDto).getUnit());
         }else{
-            cw = new TimeWorkload(cwDto.getAmount(), TimeUnit.valueOf(((TimeWorkloadDTO) cwDto).getUnit()));
+            cw = new TimeWorkload(cwDto.getAmount(), TimeUnit.valueOf(((TimeWorkloadDTO) cwDto).getTimeUnit()));
         }
         if (ccDto instanceof HabitContentDTO){
             cc = new HabitContent(cw, TimeUnit.valueOf(((HabitContentDTO) ccDto).getFrequency()),

@@ -64,30 +64,27 @@ public class AuthServiceImpl implements AuthService {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
+                .toList();
 
         return Optional.of(new LoginResponse(jwt,
-                userDetails.getId(),
-                userDetails.getUsername(),
-                userDetails.getEmail(),
-                roles));
+                userDetails.getId()));
     }
 
     @Transactional
-    public Optional<LoginResponse> registerUser(String username, String email, String password, List<String> strRoles) {
+    public Boolean registerUser(String username, String email, String password, List<String> strRoles) {
         if (userRepository.existsByUsername(username)) {
-            return Optional.empty();
+            return false;
         }
         if (userRepository.existsByEmail(email)) {
-            return Optional.empty();
+            return false;
         }
-        User user = new User(username, email, encoder.encode(password));
+        User user = new User(username, encoder.encode(password), email);
         Set<Role> roles = new HashSet<>();
 
         if (strRoles == null) {
             Optional<Role> userRole = roleRepository.findByName(RoleType.ROLE_USER);
             if (userRole.isEmpty()){
-                return Optional.empty();
+                return false;
             }
         } else {
             for (String s: strRoles){
@@ -95,14 +92,14 @@ public class AuthServiceImpl implements AuthService {
                     case "admin":
                         Optional<Role> adminRole = roleRepository.findByName(RoleType.ROLE_ADMIN);
                         if (adminRole.isEmpty()){
-                            return Optional.empty();
+                            return false;
                         }
                         roles.add(adminRole.get());
                         break;
                     default:
                         Optional<Role> userRole = roleRepository.findByName(RoleType.ROLE_USER);
                         if (userRole.isEmpty()){
-                            return Optional.empty();
+                            return false;
                         }
                         roles.add(userRole.get());
                 }
@@ -112,6 +109,6 @@ public class AuthServiceImpl implements AuthService {
         user.setRoles(roles);
         userRepository.save(user);
 
-        return Optional.empty();
+        return true;
     }
 }

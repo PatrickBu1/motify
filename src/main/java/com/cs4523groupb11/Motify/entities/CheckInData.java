@@ -6,19 +6,19 @@ import java.util.Date;
 
 @Entity
 @Table(name="checkin_data",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"user", "challenge", "date"})})
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"owner", "challenge", "date"})})
 public class CheckInData {
     private String id;
-    private User user;
+    private User owner;
     private String title;
     private String content;
     private Date date;
     private Challenge challenge;
 
     public CheckInData(){}
-    public CheckInData(User user, String title, String content,
+    public CheckInData(User owner, String title, String content,
                        Date date, Challenge challenge){
-        this.user = user;
+        this.owner = owner;
         this.title = title;
         this.content = content;
         this.date = date;
@@ -36,11 +36,11 @@ public class CheckInData {
 
     @ManyToOne()
     @JoinColumn(name = "owner", nullable = false)
-    public User getUser(){
-        return user;
+    public User getOwner(){
+        return owner;
     }
-    public void setUser(User user){
-        this.user = user;
+    public void setOwner(User owner){
+        this.owner = owner;
     }
 
     @Column(name = "title", nullable = false)
@@ -64,7 +64,7 @@ public class CheckInData {
     }
 
     @ManyToOne()
-    @JoinColumn(name = "challenge_id")
+    @JoinColumn(name = "challenge")
     public Challenge getChallenge(){
         return challenge;
     }

@@ -64,7 +64,7 @@ public class CheckInDataDTO {
     }
 
     public static CheckInDataDTO fromEntity(CheckInData c){
-        return new CheckInDataDTO(c.getId(), c.getUser().getUsername(), c.getTitle(),
+        return new CheckInDataDTO(c.getId(), c.getOwner().getUsername(), c.getTitle(),
                 c.getContent(), c.getDate(), c.getChallenge().getId());
     }
 }
