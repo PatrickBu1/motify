@@ -4,7 +4,6 @@ package com.cs4523groupb11.Motify.services.impl;
 import com.cs4523groupb11.Motify.entities.Challenge;
 import com.cs4523groupb11.Motify.entities.Participation;
 import com.cs4523groupb11.Motify.entities.User;
-import com.cs4523groupb11.Motify.entities.derived.GoalContent;
 import com.cs4523groupb11.Motify.repositories.ChallengeRepository;
 import com.cs4523groupb11.Motify.repositories.ParticipationRepository;
 import com.cs4523groupb11.Motify.repositories.UserRepository;
@@ -26,7 +25,9 @@ public class ParticipationServiceImpl implements ParticipationService {
 
 
     @Autowired
-    public ParticipationServiceImpl(ParticipationRepository participationRepository, UserRepository userRepository, ChallengeRepository challengeRepository) {
+    public ParticipationServiceImpl(ParticipationRepository participationRepository,
+                                    UserRepository userRepository,
+                                    ChallengeRepository challengeRepository) {
         this.participationRepository = participationRepository;
         this.userRepository = userRepository;
         this.challengeRepository = challengeRepository;
@@ -60,8 +61,7 @@ public class ParticipationServiceImpl implements ParticipationService {
     @Transactional
     public Optional<List<User>> getParticipantsByPublicChallengeId(String cid){
         Optional<Challenge> opChallenge = challengeRepository.findById(cid);
-        return opChallenge.map(challenge -> participationRepository.findAllUserByChallenge(challenge));
-
+        return opChallenge.map(participationRepository::findAllUserByChallenge);
     }
 
 
@@ -70,9 +70,9 @@ public class ParticipationServiceImpl implements ParticipationService {
         Optional<User> opUser = userRepository.findById(userId);
         Optional<Challenge> opChallenge = challengeRepository.findById(cid);
         if (opUser.isEmpty() || opChallenge.isEmpty()) { throw new NoSuchElementException();}
-        Boolean isProgressBased = opChallenge.get().getContent() instanceof GoalContent;
+        Boolean isHabit = opChallenge.get().getFrequency() != null;
         Participation newParticipation = new Participation(
-                opUser.get(), opChallenge.get(), isProgressBased, true,
+                opUser.get(), opChallenge.get(), isHabit, true,
                 0, Collections.emptyList(), 0
         );
         participationRepository.saveAndFlush(newParticipation);

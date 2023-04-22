@@ -70,7 +70,7 @@ public class ParticipationDTO {
         return new ParticipationDTO(p.getOwner().getId(),
                 p.getChallenge().getId(),
                 p.getIsPrivate(),
-                p.getIsGoal(),
+                p.getIsHabit(),
                 p.getIsActive(),
                 p.getProgress(),
                 p.getCompletedDates(),

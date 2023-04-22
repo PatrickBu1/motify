@@ -17,7 +17,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/challenge")
-@PreAuthorize("hasRole('USER')")
+@PreAuthorize("hasRole('ROLE_USER')")
 public class ChallengeController {
 
     private final ChallengeService challengeService;
@@ -86,6 +86,7 @@ public class ChallengeController {
     @PostMapping("/create")
     public ResponseEntity<String> create(@RequestHeader(name = "Authorization") String auth,
                                          @RequestBody ChallengeDTO challengeDTO){
+        System.out.println(auth);
         String username = jwt.getUsernameFromJwtToken(jwt.getFromHeader(auth));
         Optional<String> opId = challengeService.create(username, challengeDTO);
         return opId.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());

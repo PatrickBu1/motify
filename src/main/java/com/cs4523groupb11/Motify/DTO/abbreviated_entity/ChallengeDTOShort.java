@@ -1,14 +1,12 @@
 package com.cs4523groupb11.Motify.DTO.abbreviated_entity;
 
 
-import com.cs4523groupb11.Motify.DTO.detailed_entity.ChallengeDTO;
-import com.cs4523groupb11.Motify.DTO.detailed_entity.abstraction.ChallengeContentDTO;
 import com.cs4523groupb11.Motify.entities.Challenge;
 
 public class ChallengeDTOShort {
     private String id;
 
-    private String owner;
+    private String ownerUsername;
 
     private String name;
 
@@ -18,10 +16,10 @@ public class ChallengeDTOShort {
 
     private String category;
 
-    public ChallengeDTOShort(String id, String owner, String name,
+    public ChallengeDTOShort(String id, String ownerUsername, String name,
                         String description, Boolean isPrivate, String category) {
         this.id = id;
-        this.owner = owner;
+        this.ownerUsername = ownerUsername;
         this.name = name;
         this.description = description;
         this.isPrivate = isPrivate;
@@ -36,11 +34,11 @@ public class ChallengeDTOShort {
         this.id = id;
     }
 
-    public String getOwner(){
-        return owner;
+    public String getOwnerUsername(){
+        return ownerUsername;
     }
-    public void setOwner(String owner){
-        this.owner = owner;
+    public void setOwnerUsername(String ownerUsername){
+        this.ownerUsername = ownerUsername;
     }
 
     public String getName(){
@@ -64,7 +62,7 @@ public class ChallengeDTOShort {
     public void setCategory(String category){this.category = category;}
 
     public static ChallengeDTOShort fromEntity(Challenge c){
-        return new ChallengeDTOShort(c.getId(), c.getOwner().getId(), c.getName(),
+        return new ChallengeDTOShort(c.getId(), c.getOwner().getUsername(), c.getName(),
                 c.getDescription(), c.getIsPrivate(), c.getCategory().toString());
     }
 }
