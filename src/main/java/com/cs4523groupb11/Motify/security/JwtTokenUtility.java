@@ -25,14 +25,14 @@ public class JwtTokenUtility {
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
 
         return Jwts.builder()
-                .setSubject((userPrincipal.getUsername()))
+                .setSubject((userPrincipal.getEmail()))
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
     }
 
-    public String getUsernameFromJwtToken(String token) {
+    public String getEmailFromJwtToken(String token) {
         return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
     }
 
@@ -55,8 +55,8 @@ public class JwtTokenUtility {
         return false;
     }
 
-    public String getFromHeader(String str){
-        return str.substring(7);
+    public String getFromHeader(String token){
+        return getEmailFromJwtToken(token.substring(7));
     }
 
 }

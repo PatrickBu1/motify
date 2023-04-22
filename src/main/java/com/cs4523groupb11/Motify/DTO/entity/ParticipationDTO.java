@@ -1,4 +1,4 @@
-package com.cs4523groupb11.Motify.DTO.detailed_entity;
+package com.cs4523groupb11.Motify.DTO.entity;
 
 import com.cs4523groupb11.Motify.entities.Participation;
 
@@ -7,7 +7,7 @@ import java.util.List;
 
 public class ParticipationDTO {
 
-    private String owner;
+    private String ownerId;
 
     private String challenge;
 
@@ -25,9 +25,9 @@ public class ParticipationDTO {
 
     public ParticipationDTO(){}
 
-    public ParticipationDTO(String owner, String challenge, Boolean isPrivate, Boolean isGoal,
+    public ParticipationDTO(String ownerId, String challenge, Boolean isPrivate, Boolean isGoal,
                             Boolean isActive, Integer progress, List<Date> completedDates, Integer streak){
-        this.owner = owner;
+        this.ownerId = ownerId;
         this.challenge = challenge;
         this.isPrivate = isPrivate;
         this.isGoal = isGoal;
@@ -37,8 +37,8 @@ public class ParticipationDTO {
         this.streak = streak;
     }
 
-    public String getOwner() {return owner;}
-    public void setOwner(String owner) {this.owner = owner;}
+    public String getOwnerId() {return ownerId;}
+    public void setOwnerId(String ownerId) {this.ownerId = ownerId;}
 
     public String getChallenge() {return challenge;}
     public void setChallenge(String challenge) {this.challenge = challenge;}
@@ -70,7 +70,7 @@ public class ParticipationDTO {
         return new ParticipationDTO(p.getOwner().getId(),
                 p.getChallenge().getId(),
                 p.getIsPrivate(),
-                p.getIsGoal(),
+                p.getIsHabit(),
                 p.getIsActive(),
                 p.getProgress(),
                 p.getCompletedDates(),

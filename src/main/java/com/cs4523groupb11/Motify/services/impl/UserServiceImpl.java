@@ -1,14 +1,10 @@
 package com.cs4523groupb11.Motify.services.impl;
 
-import com.cs4523groupb11.Motify.DTO.detailed_entity.UserDTO;
 import com.cs4523groupb11.Motify.entities.User;
-import com.cs4523groupb11.Motify.exceptions.InvalidDataException;
 import com.cs4523groupb11.Motify.repositories.UserRepository;
 import com.cs4523groupb11.Motify.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -37,8 +33,8 @@ public class UserServiceImpl implements UserService {
         return userList;
     }
 
-    public Optional<User> findByUsername(String username){
-        return userRepository.findByUsername(username);
+    public List<User> findAllByUsername(String username){
+        return userRepository.findAllByUsername(username);
     }
 
     public Optional<User> findByEmail(String email){

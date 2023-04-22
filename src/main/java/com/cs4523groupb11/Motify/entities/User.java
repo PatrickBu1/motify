@@ -9,7 +9,6 @@ import java.util.Set;
 @Entity
 @Table(name = "users",
         uniqueConstraints = {
-        @UniqueConstraint(columnNames = "username"),
         @UniqueConstraint(columnNames = "email")
 })
 public class User{
@@ -20,6 +19,8 @@ public class User{
     private String password;
 
     private String email;
+
+    private String profileImagePath;
 
     private Set<Role> roles = new HashSet<>();
 
@@ -51,7 +52,7 @@ public class User{
     public String getEmail() {return email;}
     public void setEmail(String email) {this.email = email;}
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
@@ -61,4 +62,9 @@ public class User{
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
+
+
+    @Column(name = "profile_image_path")
+    public String getProfileImagePath() {return profileImagePath;}
+    public void setProfileImagePath(String profileImagePath) {this.profileImagePath = profileImagePath;}
 }

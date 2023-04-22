@@ -18,10 +18,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.bind.support.WebBindingInitializer;
 
 @Configuration
-@EnableGlobalMethodSecurity(
-        //securedEnabled = true,
-        //jsr250Enabled = true,
-        prePostEnabled = true)
 public class WebSecurityConfig {
 
     private final UserDetailsServiceImpl userDetailsService;

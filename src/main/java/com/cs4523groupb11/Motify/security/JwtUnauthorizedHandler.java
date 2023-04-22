@@ -19,8 +19,6 @@ public class JwtUnauthorizedHandler implements AuthenticationEntryPoint {
                          AuthenticationException authException)
             throws IOException, ServletException{
         System.out.println("Authentication Exception occured: "+authException.getMessage());
-        // To be implemented:
-        // logging feature after unauthorized visit is detected
     }
 
 }

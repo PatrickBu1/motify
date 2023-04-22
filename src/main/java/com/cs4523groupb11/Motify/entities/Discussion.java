@@ -5,24 +5,30 @@ import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name="checkin_data",
+@Table(name="discussion",
         uniqueConstraints = {@UniqueConstraint(columnNames = {"owner", "challenge", "date"})})
-public class CheckInData {
+public class Discussion {
     private String id;
+
     private User owner;
-    private String title;
+
     private String content;
+
     private Date date;
+
     private Challenge challenge;
 
-    public CheckInData(){}
-    public CheckInData(User owner, String title, String content,
-                       Date date, Challenge challenge){
+    private String imagePath;
+
+    public Discussion(){}
+    public Discussion(User owner, String content,
+                      Date date, Challenge challenge,
+                      String imagePath){
         this.owner = owner;
-        this.title = title;
         this.content = content;
         this.date = date;
         this.challenge = challenge;
+        this.imagePath = imagePath;
     }
 
     @Id
@@ -43,9 +49,6 @@ public class CheckInData {
         this.owner = owner;
     }
 
-    @Column(name = "title", nullable = false)
-    public String getTitle(){return title;}
-    public void setTitle(String title){this.title = title;}
 
     @Column(name = "content", nullable = false)
     public String getContent(){
@@ -71,4 +74,8 @@ public class CheckInData {
     public void setChallenge(Challenge challenge) {
         this.challenge = challenge;
     }
+
+    @Column(name = "image_path")
+    public String getImagePath() {return imagePath;}
+    public void setImagePath(String imagePath) {this.imagePath = imagePath;}
 }

@@ -1,5 +1,6 @@
 package com.cs4523groupb11.Motify.services.impl;
 
+import com.cs4523groupb11.Motify.DTO.entity.UserDTO;
 import com.cs4523groupb11.Motify.entities.Role;
 import com.cs4523groupb11.Motify.entities.enums.RoleType;
 import com.cs4523groupb11.Motify.entities.User;
@@ -23,7 +24,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -53,10 +53,10 @@ public class AuthServiceImpl implements AuthService {
     }
 
 
-    public Optional<LoginResponse> authenticateUser(String username, String password) {
+    public Optional<LoginResponse> authenticateUser(String email, String password) {
 
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(username, password));
+                new UsernamePasswordAuthenticationToken(email, password));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtTokenUtility.generateJwtToken(authentication);
@@ -66,17 +66,14 @@ public class AuthServiceImpl implements AuthService {
                 .map(GrantedAuthority::getAuthority)
                 .toList();
 
-        return Optional.of(new LoginResponse(jwt,
-                userDetails.getId()));
+        return Optional.of(new LoginResponse(jwt, new UserDTO(userDetails.getId(), userDetails.getUsername(),
+                userDetails.getEmail(), "")));
     }
 
     @Transactional
-    public Boolean registerUser(String username, String email, String password, List<String> strRoles) {
-        if (userRepository.existsByUsername(username)) {
-            return false;
-        }
+    public Optional<LoginResponse> registerUser(String username, String email, String password, List<String> strRoles) {
         if (userRepository.existsByEmail(email)) {
-            return false;
+            return Optional.empty();
         }
         User user = new User(username, encoder.encode(password), email);
         Set<Role> roles = new HashSet<>();
@@ -84,22 +81,23 @@ public class AuthServiceImpl implements AuthService {
         if (strRoles == null) {
             Optional<Role> userRole = roleRepository.findByName(RoleType.ROLE_USER);
             if (userRole.isEmpty()){
-                return false;
+                return Optional.empty();
             }
+            roles.add(userRole.get());
         } else {
             for (String s: strRoles){
                 switch (s) {
                     case "admin":
                         Optional<Role> adminRole = roleRepository.findByName(RoleType.ROLE_ADMIN);
                         if (adminRole.isEmpty()){
-                            return false;
+                            return Optional.empty();
                         }
                         roles.add(adminRole.get());
                         break;
                     default:
                         Optional<Role> userRole = roleRepository.findByName(RoleType.ROLE_USER);
                         if (userRole.isEmpty()){
-                            return false;
+                            return Optional.empty();
                         }
                         roles.add(userRole.get());
                 }
@@ -107,8 +105,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         user.setRoles(roles);
-        userRepository.save(user);
-
-        return true;
+        userRepository.saveAndFlush(user);
+        return authenticateUser(email, password);
     }
 }

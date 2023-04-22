@@ -1,7 +1,7 @@
 package com.cs4523groupb11.Motify.repositories;
 
 import com.cs4523groupb11.Motify.entities.Challenge;
-import com.cs4523groupb11.Motify.entities.CheckInData;
+import com.cs4523groupb11.Motify.entities.Discussion;
 import com.cs4523groupb11.Motify.entities.User;
 import io.micrometer.common.lang.NonNullApi;
 import org.springframework.data.domain.Page;
@@ -13,12 +13,12 @@ import java.util.List;
 
 @NonNullApi
 @Repository
-public interface CheckInDataRepository extends JpaRepository<CheckInData, String> {
-    List<CheckInData> findAllByOwnerAndChallenge(User owner, Challenge challenge);
+public interface DiscussionRepository extends JpaRepository<Discussion, String> {
+    List<Discussion> findAllByOwnerAndChallenge(User owner, Challenge challenge);
 
-    Page<CheckInData> findPageByChallenge(Challenge challenge, Pageable pageable);
+    Page<Discussion> findPageByChallenge(Challenge challenge, Pageable pageable);
 
-    List<CheckInData> findAllByChallenge(Challenge challenge);
+    List<Discussion> findAllByChallenge(Challenge challenge);
 
     void deleteById(String id);
 }

@@ -1,25 +1,23 @@
 package com.cs4523groupb11.Motify.entities.derived;
 
 import com.cs4523groupb11.Motify.entities.abstraction.ChallengeWorkload;
-import com.cs4523groupb11.Motify.entities.enums.TimeUnit;
 import jakarta.persistence.*;
+
+import java.time.Duration;
+import java.time.Period;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "time_workload_id")
 public class TimeWorkload extends ChallengeWorkload {
-    //private String id;
-
-    private TimeUnit timeUnit;
-
+    private Duration duration;
 
     public TimeWorkload(){}
 
-    public TimeWorkload(Integer amount, TimeUnit timeUnit){
-        this.amount = amount;
-        this.timeUnit = timeUnit;
+    public TimeWorkload(Duration duration){
+        this.duration = duration;
     }
 
-    @Column(name="time_unit", nullable = false)
-    public TimeUnit getTimeUnit() {return timeUnit;}
-    public void setTimeUnit(TimeUnit unit) { this.timeUnit = unit;}
+    @Column(name="duration", nullable = false)
+    public Duration getDuration() {return duration;}
+    public void setDuration(Duration duration) { this.duration = duration;}
 }

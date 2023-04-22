@@ -1,6 +1,6 @@
 package com.cs4523groupb11.Motify.services;
 
-import com.cs4523groupb11.Motify.DTO.detailed_entity.ChallengeDTO;
+import com.cs4523groupb11.Motify.DTO.entity.ChallengeDTO;
 import com.cs4523groupb11.Motify.entities.Challenge;
 import org.springframework.data.domain.Page;
 

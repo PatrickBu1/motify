@@ -2,6 +2,8 @@ package com.cs4523groupb11.Motify.entities;
 
 import jakarta.persistence.*;
 
+import java.time.Duration;
+import java.time.Period;
 import java.util.Date;
 import java.util.List;
 
@@ -17,11 +19,13 @@ public class Participation {
 
     private Boolean isPrivate;
 
-    private Boolean isGoal;    // if goal, then based on progress; else it's based on completed dates and streak
+    private Boolean isHabit;    // if Habit, completed dates and streak not null; if Goal, progress is not null.
 
     private Boolean isActive;
 
     private Integer progress;
+
+    private Duration durationProgress;
 
     private List<Date> completedDates;
 
@@ -29,11 +33,11 @@ public class Participation {
 
     public Participation(){}
 
-    public Participation(User owner, Challenge challenge, Boolean isGoal, Boolean isActive,
+    public Participation(User owner, Challenge challenge, Boolean isHabit, Boolean isActive,
                          Integer progress, List<Date> completedDates, Integer streak){
         this.owner = owner;
         this.challenge = challenge;
-        this.isGoal = isGoal;
+        this.isHabit = isHabit;
         this.isActive = isActive;
         this.progress = progress;
         this.completedDates = completedDates;
@@ -59,26 +63,33 @@ public class Participation {
     public Boolean getIsPrivate() {return isPrivate;}
     public void setIsPrivate(Boolean aPrivate) {isPrivate = aPrivate;}
 
-    @Column(name="is_progress_based", nullable = false)
-    public Boolean getIsGoal(){return isGoal;}
-    public void setIsGoal(Boolean isProgressBased){this.isGoal = isProgressBased;}
+    @Column(name="is_habit", nullable = false)
+    public Boolean getIsHabit(){return isHabit;}
+    public void setIsHabit(Boolean isHabit){this.isHabit = isHabit;}
 
     @Column(name="is_active", nullable=false)
     public Boolean getIsActive() {return isActive;}
     public void setIsActive(Boolean active) {isActive = active;}
 
-    @Column(name = "progress", nullable = false)
-    public Integer getProgress() {return progress;}
-    public void setProgress(Integer progress) {
+    @Column(name = "progress")
+    public Period getProgress() {return progress;}
+    public void setProgress(Period progress) {
         this.progress = progress;
     }
+
+    @Column(name = "duration_progress")
+    public Integer getDurationProgress() {return durationProgress;}
+    public void setDurationProgress(Integer durationProgress) {
+        this.durationProgress = durationProgress;
+    }
+
 
     @ElementCollection
     @CollectionTable(name = "completed_dates")
     public List<Date> getCompletedDates() {return completedDates;}
     public void setCompletedDates(List<Date> completedDates) {this.completedDates = completedDates;}
 
-    @Column(name = "streak", nullable = false)
+    @Column(name = "streak")
     public Integer getStreak() {return streak;}
     public void setStreak(Integer streak) {
         this.streak = streak;

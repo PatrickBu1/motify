@@ -6,7 +6,8 @@ import jakarta.persistence.*;
 @Entity
 @PrimaryKeyJoinColumn(name = "quantity_workload_id")
 public class QuantityWorkload extends ChallengeWorkload {
-    //private String quantity_id;
+
+    private Integer amount;
 
     private String unit;
 
@@ -16,6 +17,10 @@ public class QuantityWorkload extends ChallengeWorkload {
         this.amount = amount;
         this.unit = unit;
     }
+
+    @Column(name="amount", nullable = false)
+    public Integer getAmount() {return amount;}
+    public void setAmount(Integer amount) { this.amount = amount;}
 
     @Column(name="unit", nullable = false)
     public String getUnit() {return unit;}

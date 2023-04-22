@@ -1,17 +1,12 @@
 package com.cs4523groupb11.Motify.services.impl;
 
-import com.cs4523groupb11.Motify.DTO.detailed_entity.ChallengeDTO;
-import com.cs4523groupb11.Motify.DTO.detailed_entity.abstraction.ChallengeContentDTO;
-import com.cs4523groupb11.Motify.DTO.detailed_entity.abstraction.ChallengeWorkloadDTO;
-import com.cs4523groupb11.Motify.DTO.detailed_entity.derived.HabitContentDTO;
-import com.cs4523groupb11.Motify.DTO.detailed_entity.derived.QuantityWorkloadDTO;
-import com.cs4523groupb11.Motify.DTO.detailed_entity.derived.TimeWorkloadDTO;
+import com.cs4523groupb11.Motify.DTO.entity.ChallengeDTO;
+import com.cs4523groupb11.Motify.DTO.entity.QuantityWorkloadDTO;
+import com.cs4523groupb11.Motify.DTO.entity.TimeWorkloadDTO;
+import com.cs4523groupb11.Motify.DTO.entity.abstraction.ChallengeWorkloadDTO;
 import com.cs4523groupb11.Motify.entities.Challenge;
 import com.cs4523groupb11.Motify.entities.User;
-import com.cs4523groupb11.Motify.entities.abstraction.ChallengeContent;
 import com.cs4523groupb11.Motify.entities.abstraction.ChallengeWorkload;
-import com.cs4523groupb11.Motify.entities.derived.GoalContent;
-import com.cs4523groupb11.Motify.entities.derived.HabitContent;
 import com.cs4523groupb11.Motify.entities.derived.QuantityWorkload;
 import com.cs4523groupb11.Motify.entities.derived.TimeWorkload;
 import com.cs4523groupb11.Motify.entities.enums.ChallengeCategory;
@@ -20,7 +15,6 @@ import com.cs4523groupb11.Motify.repositories.ChallengeRepository;
 import com.cs4523groupb11.Motify.repositories.UserRepository;
 import com.cs4523groupb11.Motify.services.ChallengeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -46,8 +40,8 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
 
     @Transactional
-    public Optional<Challenge> getById(String id, String username){
-        Optional<User> opUser = userRepository.findByUsername(username);
+    public Optional<Challenge> getById(String id, String email){
+        Optional<User> opUser = userRepository.findByEmail(email);
         Optional<Challenge> opChallenge = challengeRepository.findById(id);
         if (opUser.isEmpty() || opChallenge.isEmpty()){return Optional.empty();}
         User user = opUser.get();
@@ -65,8 +59,8 @@ public class ChallengeServiceImpl implements ChallengeService {
 
 
     @Transactional
-    public Optional<List<Challenge>> getAllPrivateChallenges(String username){
-        Optional<User> opUser = userRepository.findByUsername(username);
+    public Optional<List<Challenge>> getAllPrivateChallenges(String email){
+        Optional<User> opUser = userRepository.findByEmail(email);
         if (opUser.isEmpty()) {return Optional.empty();}
         List<Challenge> res = challengeRepository.findByIsPrivateTrueAndOwner(opUser.get());
         return Optional.of(res);
@@ -75,81 +69,70 @@ public class ChallengeServiceImpl implements ChallengeService {
     @Transactional
     public Optional<List<Challenge>> getAllPublicChallengesByOwner(String userId){
         Optional<User> opUser = userRepository.findById(userId);
-        return opUser.map(user -> challengeRepository.findByIsPrivateFalseAndOwner(user));
+        return opUser.map(challengeRepository::findByIsPrivateFalseAndOwner);
     }
 
     @Transactional
-    public Optional<String> create(String userame, ChallengeDTO dto){
-        Optional<User> opUser = userRepository.findByUsername(dto.getOwner());
-        if (opUser.isEmpty()){return Optional.empty();}
-        ChallengeContentDTO ccDto = dto.getContent();
-        ChallengeWorkloadDTO cwDto = ccDto.getWorkload();
-        ChallengeContent cc;
+    public Optional<String> create(String email, ChallengeDTO dto){
+        Optional<User> opUser = userRepository.findById(dto.getOwnerId());
+        if (opUser.isEmpty() || !opUser.get().getEmail().equals(email)){
+            return Optional.empty();
+        }
+        ChallengeWorkloadDTO cwDto = dto.getWorkload();
         ChallengeWorkload cw;
         if (cwDto instanceof QuantityWorkloadDTO){
-            cw = new QuantityWorkload(cwDto.getAmount(), ((QuantityWorkloadDTO) cwDto).getUnit());
+            cw = new QuantityWorkload(((QuantityWorkloadDTO) cwDto).getAmount(), ((QuantityWorkloadDTO) cwDto).getUnit());
         }else{
-            cw = new TimeWorkload(cwDto.getAmount(), TimeUnit.valueOf(((TimeWorkloadDTO) cwDto).getTimeUnit()));
+            cw = new TimeWorkload(((TimeWorkloadDTO) cwDto).getDuration());
         }
-        if (ccDto instanceof HabitContentDTO){
-            cc = new HabitContent(cw, TimeUnit.valueOf(((HabitContentDTO) ccDto).getFrequency()),
-                    ((HabitContentDTO) ccDto).getTimeBound(), ((HabitContentDTO) ccDto).getStartDate(),
-                    ((HabitContentDTO) ccDto).getEndDate());
-        }else{
-            cc = new GoalContent(cw);
-        }
-        Challenge c = new Challenge(opUser.get(), dto.getName(), dto.getDescription(), dto.getPrivate(),
-                ChallengeCategory.valueOf(dto.getCategory()), cc, new Date());
+        TimeUnit tu = (dto.getFrequency() == null)? null: TimeUnit.valueOf(dto.getFrequency());
+        Challenge c = new Challenge(opUser.get(), dto.getName(), dto.getDescription(), dto.getIsPrivate(),
+                ChallengeCategory.valueOf(dto.getCategory()), dto.getIsOngoing(), dto.getStartDate(),
+                dto.getEndDate(), tu, cw, new Date());
         Challenge saved;
         try{
             saved = challengeRepository.saveAndFlush(c);
-        }catch(DataIntegrityViolationException e){
+        }catch(Exception e){
             return Optional.empty();
         }
         return Optional.of(saved.getId());
     }
 
     @Transactional
-    public Optional<String> update(String username, ChallengeDTO dto){
+    public Optional<String> update(String email, ChallengeDTO dto){
         Optional<Challenge> opChallenge = challengeRepository.findById(dto.getId());
-        Optional<User> opUser = userRepository.findByUsername(dto.getOwner());
+        Optional<User> opUser = userRepository.findById(dto.getOwnerId());
         if (opChallenge.isEmpty() ||
                 opUser.isEmpty() ||
-                !opChallenge.get().getOwner().getUsername().equals(username) ||
-                !opUser.get().getUsername().equals(username)) {
+                !opChallenge.get().getOwner().getEmail().equals(email) ||
+                !opUser.get().getEmail().equals(email)) {
             return Optional.empty();
         }
-        ChallengeContentDTO ccDto = dto.getContent();
-        ChallengeWorkloadDTO cwDto = ccDto.getWorkload();
-        ChallengeContent cc;
+        ChallengeWorkloadDTO cwDto = dto.getWorkload();
         ChallengeWorkload cw;
         if (cwDto instanceof QuantityWorkloadDTO){
-            cw = new QuantityWorkload(cwDto.getAmount(), ((QuantityWorkloadDTO) cwDto).getUnit());
+            cw = new QuantityWorkload(((QuantityWorkloadDTO) cwDto).getAmount(), ((QuantityWorkloadDTO) cwDto).getUnit());
         }else{
-            cw = new TimeWorkload(cwDto.getAmount(), TimeUnit.valueOf(((TimeWorkloadDTO) cwDto).getTimeUnit()));
+            cw = new TimeWorkload(((TimeWorkloadDTO) cwDto).getDuration());
         }
-        if (ccDto instanceof HabitContentDTO){
-            cc = new HabitContent(cw, TimeUnit.valueOf(((HabitContentDTO) ccDto).getFrequency()),
-                    ((HabitContentDTO) ccDto).getTimeBound(), ((HabitContentDTO) ccDto).getStartDate(),
-                    ((HabitContentDTO) ccDto).getEndDate());
-        }else{
-            cc = new GoalContent(cw);
-        }
-        Challenge c = new Challenge(opUser.get(), dto.getName(), dto.getDescription(), dto.getPrivate(),
-                ChallengeCategory.valueOf(dto.getCategory()), cc, dto.getCreatedAt());
+        TimeUnit tu = (dto.getFrequency() == null)? null: TimeUnit.valueOf(dto.getFrequency());
+        Challenge c = new Challenge(opUser.get(), dto.getName(), dto.getDescription(), dto.getIsPrivate(),
+                ChallengeCategory.valueOf(dto.getCategory()), dto.getIsOngoing(), dto.getStartDate(),
+                dto.getEndDate(), tu, cw, dto.getCreatedAt());
+        c.setId(dto.getId());
         Challenge saved;
         try{
             saved = challengeRepository.saveAndFlush(c);
-        }catch(DataIntegrityViolationException e){
+        }catch(Exception e){
             return Optional.empty();
         }
         return Optional.of(saved.getId());
     }
 
     @Transactional
-    public void delete(String username, String id) {
+    public void delete(String email, String id) {
         Optional<Challenge> pc = challengeRepository.findById(id);
-        if (pc.isPresent()) {
+        if (pc.isPresent() && pc.get().getOwner().getEmail().equals(email)) {
             challengeRepository.deleteById(id);
         }
         throw new NoSuchElementException();

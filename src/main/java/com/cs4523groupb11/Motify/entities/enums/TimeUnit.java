@@ -5,7 +5,8 @@ public enum TimeUnit {
     HOUR("HOUR"),
     DAY("DAY"),
     WEEK("WEEK"),
-    MONTH("MONTH");
+    MONTH("MONTH"),
+    YEAR("YEAR");
 
     private final String unit;
 

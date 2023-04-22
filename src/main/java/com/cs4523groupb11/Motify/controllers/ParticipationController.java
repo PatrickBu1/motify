@@ -1,21 +1,28 @@
 package com.cs4523groupb11.Motify.controllers;
 
-import com.cs4523groupb11.Motify.DTO.detailed_entity.ParticipationDTO;
-import com.cs4523groupb11.Motify.DTO.detailed_entity.UserDTO;
+import com.cs4523groupb11.Motify.DTO.entity.ChallengeDTO;
+import com.cs4523groupb11.Motify.DTO.entity.ParticipationDTO;
+import com.cs4523groupb11.Motify.DTO.entity.UserDTO;
+import com.cs4523groupb11.Motify.DTO.request_non_entity.CheckInRequest;
+import com.cs4523groupb11.Motify.entities.Challenge;
 import com.cs4523groupb11.Motify.entities.Participation;
 import com.cs4523groupb11.Motify.entities.User;
 import com.cs4523groupb11.Motify.security.JwtTokenUtility;
 import com.cs4523groupb11.Motify.services.ParticipationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/userChallenge")
+@RequestMapping("/api/participation")
+@PreAuthorize("hasRole('ROLE_USER')")
 public class ParticipationController {
 
     private final ParticipationService participationService;
@@ -31,9 +38,9 @@ public class ParticipationController {
     @GetMapping("/getAllSelfPublicParticipation")
     public ResponseEntity<List<ParticipationDTO>> getAllSelfPublicParticipation(
             @RequestHeader(name = "Authorization") String auth){
-        String username = jwt.getUsernameFromJwtToken(jwt.getFromHeader(auth));
+        String email = jwt.getFromHeader(auth);
         Optional<List<Participation>> opList =
-                participationService.getAllParticipationByUsername(username, false);
+                participationService.getAllParticipationByEmail(email, false);
         return opList.map(participations ->
                 ResponseEntity.ok(participations.stream().map(ParticipationDTO::fromEntity).toList()))
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -42,9 +49,9 @@ public class ParticipationController {
     @GetMapping("/getAllSelfPrivateParticipation")
     public ResponseEntity<List<ParticipationDTO>> getAllSelfPrivateParticipation(
             @RequestHeader(name = "Authorization") String auth){
-        String username = jwt.getUsernameFromJwtToken(jwt.getFromHeader(auth));
+        String username = jwt.getFromHeader(auth);
         Optional<List<Participation>> opList =
-                participationService.getAllParticipationByUsername(username, true);
+                participationService.getAllParticipationByEmail(username, true);
         return opList.map(participations ->
                         ResponseEntity.ok(participations.stream().map(ParticipationDTO::fromEntity).toList()))
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -53,9 +60,9 @@ public class ParticipationController {
     @GetMapping("/getOneSelfParticipation/{id}")
     public ResponseEntity<ParticipationDTO> getOneSelfParticipation(@RequestHeader(name = "Authorization") String auth,
                                                                  @PathVariable String id){
-        String username = jwt.getUsernameFromJwtToken(jwt.getFromHeader(auth));
+        String email = jwt.getFromHeader(auth);
         Optional<Participation> opParticipation =
-                participationService.getOneParticipationByUsernameAndChallengeId(username, id);
+                participationService.getOneParticipationByEmailAndChallengeId(email, id);
         return opParticipation.map(participation -> ResponseEntity.ok(ParticipationDTO.fromEntity(participation)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -75,28 +82,49 @@ public class ParticipationController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping("/join/{id}")
+    @GetMapping("/getSelfByDate/{date}")
+    public ResponseEntity<List<ChallengeDTO>> getSelfChallengesByDate(@RequestHeader(name = "Authorization") String auth,
+                                                                           @PathVariable Date date){
+        String email = jwt.getFromHeader(auth);
+        Optional<List<Challenge>> res = participationService.getSelfChallengesByDate(email, date);
+        return res.map(challenges -> ResponseEntity.ok(challenges.stream().map(ChallengeDTO::fromEntity).toList()))
+                .orElseGet(() -> ResponseEntity.badRequest().build());
+    }
+
+//    @PostMapping("/checkin/{id}")
+//    public ResponseEntity<ParticipationDTO> checkIn(@PathVariable String id,
+//                                                    @RequestHeader(name="Authorization") String auth,
+//                                                    @RequestBody CheckInRequest request
+//                                                    ){
+//        if
+//        Optional<Participation> res = participationService.checkIn()
+//    }
+
+
+    @PostMapping("/joinPublic/{id}")
     public ResponseEntity<Void> joinPublicChallenge(@RequestHeader(name = "Authorization") String auth,
                                                          @PathVariable String id){
-        String username = jwt.getUsernameFromJwtToken(jwt.getFromHeader(auth));
+        String email = jwt.getFromHeader(auth);
         try{
-            participationService.addParticipationEntry(username, id);
+            participationService.addParticipationEntry(email, id);
         }catch (NoSuchElementException e){
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/exit/{id}")
+    @PostMapping("/quitPublic/{id}")
     public ResponseEntity<Void> quitPublicChallenge(@RequestHeader(name = "Authorization") String auth,
                                                          @PathVariable String id){
-        String username = jwt.getUsernameFromJwtToken(jwt.getFromHeader(auth));
+        String email = jwt.getFromHeader(auth);
         try{
-            participationService.deleteParticipationEntry(username, id);
+            participationService.deleteParticipationEntry(email, id);
         }catch (NoSuchElementException e){
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok().build();
     }
+
+
 
 }

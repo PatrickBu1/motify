@@ -1,8 +1,9 @@
 package com.cs4523groupb11.Motify.entities;
 
 
-import com.cs4523groupb11.Motify.entities.abstraction.ChallengeContent;
+import com.cs4523groupb11.Motify.entities.abstraction.ChallengeWorkload;
 import com.cs4523groupb11.Motify.entities.enums.ChallengeCategory;
+import com.cs4523groupb11.Motify.entities.enums.TimeUnit;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -23,20 +24,35 @@ public class Challenge {
 
     private ChallengeCategory category;
 
-    private ChallengeContent content;
+    private Boolean isOngoing;
+
+    private Date startDate;
+
+    private Date endDate;
+
+    private TimeUnit frequency; // Habit-challenge only; nullable for Goal-challenges
+
+    private ChallengeWorkload workload;
 
     private Date createdAt;
+
 
     public Challenge(){}
 
     public Challenge(User owner, String name, String description, Boolean isPrivate,
-                     ChallengeCategory category, ChallengeContent content, Date createdAt){
+                     ChallengeCategory category, Boolean isOngoing, Date startDate,
+                     Date endDate, TimeUnit frequency, ChallengeWorkload workload,
+                     Date createdAt){
         this.owner = owner;
         this.name = name;
         this.description = description;
         this.isPrivate = isPrivate;
         this.category = category;
-        this.content = content;
+        this.isOngoing = isOngoing;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.frequency = frequency;
+        this.workload = workload;
         this.createdAt = createdAt;
     }
 
@@ -75,10 +91,28 @@ public class Challenge {
     public ChallengeCategory getCategory(){return category;}
     public void setCategory(ChallengeCategory category){this.category = category;}
 
+    @Column(name = "is_ongoing", nullable = false)
+    public Boolean getIsOngoing() {return isOngoing;}
+    public void setIsOngoing(Boolean ongoing) {isOngoing = ongoing;}
+
+    @Column(name="start_date")
+    public Date getStartDate() {return startDate;}
+    public void setStartDate(Date startDate) {this.startDate = startDate;}
+
+    @Column(name="end_date")
+    public Date getEndDate() {return endDate;}
+    public void setEndDate(Date endDate) {this.endDate = endDate;}
+
+    @Column(name = "frequency")
+    public TimeUnit getFrequency() {return frequency;}
+    public void setFrequency(TimeUnit frequency) {this.frequency = frequency;}
+
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "content")
-    public ChallengeContent getContent() {return content;}
-    public void setContent(ChallengeContent content){this.content = content;}
+    @JoinColumn(name = "workload")
+    public ChallengeWorkload getWorkload() {return workload;}
+    public void setWorkload(ChallengeWorkload workload) {
+        this.workload = workload;
+    }
 
     @Column(name = "created_at", nullable = false)
     public Date getCreatedAt() { return createdAt;}

@@ -1,16 +1,16 @@
 package com.cs4523groupb11.Motify.DTO.response_non_entity;
 
-import java.util.List;
+import com.cs4523groupb11.Motify.DTO.entity.UserDTO;
 
 public class LoginResponse {
     private String token;
-    private String userId;
+    private UserDTO user;
 
     public LoginResponse(){};
 
-    public LoginResponse(String token, String userId){
+    public LoginResponse(String token, UserDTO user){
         this.token = token;
-        this.userId = userId;
+        this.user = user;
     }
 
     public String getToken() {
@@ -21,12 +21,12 @@ public class LoginResponse {
         this.token = token;
     }
 
-    public String getUserId() {
-        return userId;
+    public UserDTO getUser() {
+        return user;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUser(UserDTO user) {
+        this.user = user;
     }
 
 }

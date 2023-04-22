@@ -1,8 +1,6 @@
-package com.cs4523groupb11.Motify.DTO.detailed_entity;
+package com.cs4523groupb11.Motify.DTO.entity;
 
 import com.cs4523groupb11.Motify.entities.User;
-
-import java.util.List;
 
 public class UserDTO {
     private String id;
@@ -11,13 +9,16 @@ public class UserDTO {
 
     private String email;
 
+    private String profileImagePath;
+
 
     public UserDTO() {}
 
-    public UserDTO(String id, String username, String email){
+    public UserDTO(String id, String username, String email, String profileImagePath){
         this.id = id;
         this.username = username;
         this.email = email;
+        this.profileImagePath = profileImagePath;
     }
 
     public String getId(){return id;}
@@ -29,8 +30,17 @@ public class UserDTO {
     public String getEmail() {return email;}
     public void setEmail(String email) {this.email = email;}
 
+    public String getProfileImagePath() {
+        return profileImagePath;
+    }
+
+    public void setProfileImagePath(String profileImagePath) {
+        this.profileImagePath = profileImagePath;
+    }
+
     public static UserDTO fromEntity(User u){
-        return new UserDTO(u.getId(), u.getUsername(), u.getEmail());
+        return new UserDTO(u.getId(), u.getUsername(), u.getEmail(),
+                u.getProfileImagePath());
     }
 
 }
