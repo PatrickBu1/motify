@@ -9,7 +9,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 public interface ChallengeService {
-    public Optional<Challenge> getById(String id, String username);
+    public Optional<Challenge> getById(String id, String email);
 
     public Page<Challenge> getPage(Integer page, Integer size);
 

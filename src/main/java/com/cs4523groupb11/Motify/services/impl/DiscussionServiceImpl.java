@@ -72,7 +72,7 @@ public class DiscussionServiceImpl implements DiscussionService {
 
     @Transactional
     public Optional<Discussion> post(String email, DiscussionPostRequest req, MultipartFile image) {
-        Optional<User> opUser = userRepository.findById(req.getOwnerId());
+        Optional<User> opUser = userRepository.findByEmail(email);
         Optional<Challenge> opChallenge = challengeRepository.findById(req.getChallengeId());
         if (opChallenge.isEmpty() || opUser.isEmpty() || !opUser.get().getEmail().equals(email)){
             return Optional.empty();
@@ -88,15 +88,10 @@ public class DiscussionServiceImpl implements DiscussionService {
         Discussion res;
         try{
             res = discussionRepository.saveAndFlush(discussion);
-        }catch(Exception e){
-            return Optional.empty();
-        }
-
-        try {
             if (image != null) {
                 Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
             }
-        }catch(Exception e){    // IOException
+        }catch(Exception e){
             return Optional.empty();
         }
 

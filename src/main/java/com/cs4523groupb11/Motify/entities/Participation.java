@@ -23,6 +23,8 @@ public class Participation {
 
     private Boolean isActive;
 
+    private Boolean isQuantity;
+
     private Integer progress;
 
     private Duration durationProgress;
@@ -33,13 +35,15 @@ public class Participation {
 
     public Participation(){}
 
-    public Participation(User owner, Challenge challenge, Boolean isHabit, Boolean isActive,
-                         Integer progress, List<Date> completedDates, Integer streak){
+    public Participation(User owner, Challenge challenge, Boolean isHabit, Boolean isActive, Boolean isQuantity,
+                         Integer progress, Duration durationProgress, List<Date> completedDates, Integer streak){
         this.owner = owner;
         this.challenge = challenge;
         this.isHabit = isHabit;
         this.isActive = isActive;
+        this.isQuantity = isQuantity;
         this.progress = progress;
+        this.durationProgress = durationProgress;
         this.completedDates = completedDates;
         this.streak = streak;
     }
@@ -71,15 +75,19 @@ public class Participation {
     public Boolean getIsActive() {return isActive;}
     public void setIsActive(Boolean active) {isActive = active;}
 
+    @Column(name="is_quantity")
+    public Boolean getIsQuantity() {return isQuantity;}
+    public void setIsQuantity(Boolean isQuantity) {this.isQuantity = isQuantity;}
+
     @Column(name = "progress")
-    public Period getProgress() {return progress;}
-    public void setProgress(Period progress) {
+    public Integer getProgress() {return progress;}
+    public void setProgress(Integer progress) {
         this.progress = progress;
     }
 
     @Column(name = "duration_progress")
-    public Integer getDurationProgress() {return durationProgress;}
-    public void setDurationProgress(Integer durationProgress) {
+    public Duration getDurationProgress() {return durationProgress;}
+    public void setDurationProgress(Duration durationProgress) {
         this.durationProgress = durationProgress;
     }
 

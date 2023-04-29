@@ -2,6 +2,7 @@ package com.cs4523groupb11.Motify.DTO.entity;
 
 import com.cs4523groupb11.Motify.entities.Participation;
 
+import java.time.Duration;
 import java.util.Date;
 import java.util.List;
 
@@ -19,6 +20,8 @@ public class ParticipationDTO {
 
     private Integer progress;
 
+    private Duration durationProgress;
+
     private List<Date> completedDates;
 
     private Integer streak;
@@ -26,13 +29,15 @@ public class ParticipationDTO {
     public ParticipationDTO(){}
 
     public ParticipationDTO(String ownerId, String challenge, Boolean isPrivate, Boolean isGoal,
-                            Boolean isActive, Integer progress, List<Date> completedDates, Integer streak){
+                            Boolean isActive, Integer progress, Duration durationProgress,
+                            List<Date> completedDates, Integer streak){
         this.ownerId = ownerId;
         this.challenge = challenge;
         this.isPrivate = isPrivate;
         this.isGoal = isGoal;
         this.isActive = isActive;
         this.progress = progress;
+        this.durationProgress = durationProgress;
         this.completedDates = completedDates;
         this.streak = streak;
     }
@@ -53,10 +58,14 @@ public class ParticipationDTO {
 
     public void setIsActive(Boolean active) {isActive = active;}
 
-    public Integer getCompletionStatus() {return progress;}
-    public void setCompletionStatus(Integer progress) {
+    public Integer getProgress() {return progress;}
+    public void setProgress(Integer progress) {
         this.progress = progress;
     }
+
+    public Duration getDurationProgress() {return durationProgress;}
+
+    public void setDurationProgress(Duration durationProgress) {this.durationProgress = durationProgress;}
 
     public List<Date> getCompletedDates() {return completedDates;}
     public void setCompletedDates(List<Date> completedDates) {this.completedDates = completedDates;}
@@ -73,6 +82,7 @@ public class ParticipationDTO {
                 p.getIsHabit(),
                 p.getIsActive(),
                 p.getProgress(),
+                p.getDurationProgress(),
                 p.getCompletedDates(),
                 p.getStreak());
     }

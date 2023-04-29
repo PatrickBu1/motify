@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -68,11 +69,15 @@ public class UserController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-//    @PostMapping("/uploadUserProfileImage/{}")
-//    public ResponseEntity<byte[]> getProfileImageById(@PathVariable String id){
-//
-//
-//    }
+    @PostMapping("/uploadUserProfileImage/{}")
+    public ResponseEntity<?> setProfileImage(@RequestHeader(name = "Authorization") String auth,
+                                             @RequestParam(value = "file") MultipartFile image){
+        Optional<User> opUser = userService.setProfilePicture(auth, image);
+        if (opUser.isEmpty()){
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(opUser.get());
+    }
 
     @GetMapping("/testAuth")
     public ResponseEntity<?> testAuth(){

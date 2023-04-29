@@ -28,23 +28,19 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Validated @RequestBody LoginRequest loginRequest){
-        String email = loginRequest.getEmail();
-        String password = loginRequest.getPassword();
-        Optional<LoginResponse> response = authService.authenticateUser(email, password);
+        Optional<LoginResponse> response = authService.authenticateUser(loginRequest.getEmail(),
+                loginRequest.getPassword());
         if (response.isPresent()){
             return ResponseEntity.ok(response.get());
         }
-        return ResponseEntity.badRequest().body(new MessageResponse("Error: login failed"));
+        return ResponseEntity.badRequest().build();
     }
 
     @PostMapping("/signup")
     public ResponseEntity<LoginResponse> signup(@Validated @RequestBody SignupRequest signupRequest){
-        String username = signupRequest.getUsername();
-        String email = signupRequest.getEmail();
-        String password = signupRequest.getPassword();
-        System.out.println(username + " " +  email + " " +  password);
         // List<String> roles = signupRequest.getRole();
-        Optional<LoginResponse> res = authService.registerUser(username, email, password, null);
+        Optional<LoginResponse> res = authService.registerUser(signupRequest.getUsername(), signupRequest.getEmail(),
+                signupRequest.getPassword(), null);
         return res.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());
     }
 }

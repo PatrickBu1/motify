@@ -4,6 +4,7 @@ import com.cs4523groupb11.Motify.entities.Challenge;
 import com.cs4523groupb11.Motify.entities.Participation;
 import com.cs4523groupb11.Motify.entities.User;
 
+import java.time.Duration;
 import java.time.Period;
 import java.util.Date;
 import java.util.List;
@@ -25,6 +26,6 @@ public interface ParticipationService {
 
     void deleteParticipationEntry(String email, String pcId) throws NoSuchElementException;
 
-//    Optional<Integer> checkIn(String email, String cid, Integer amount, Period period);
+    Optional<Participation> checkIn(String email, String cid, Integer amount, Duration duration);
 
 }

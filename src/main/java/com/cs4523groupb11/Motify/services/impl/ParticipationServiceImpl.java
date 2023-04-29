@@ -4,7 +4,9 @@ package com.cs4523groupb11.Motify.services.impl;
 import com.cs4523groupb11.Motify.entities.Challenge;
 import com.cs4523groupb11.Motify.entities.Participation;
 import com.cs4523groupb11.Motify.entities.User;
+import com.cs4523groupb11.Motify.entities.abstraction.ChallengeWorkload;
 import com.cs4523groupb11.Motify.entities.derived.QuantityWorkload;
+import com.cs4523groupb11.Motify.entities.derived.TimeWorkload;
 import com.cs4523groupb11.Motify.entities.enums.TimeUnit;
 import com.cs4523groupb11.Motify.repositories.ChallengeRepository;
 import com.cs4523groupb11.Motify.repositories.ParticipationRepository;
@@ -18,6 +20,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Period;
+import java.time.temporal.Temporal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -107,34 +110,53 @@ public class ParticipationServiceImpl implements ParticipationService {
     }
 
 
+    @Transactional
+    public Optional<Participation> checkIn(String email, String cid, Integer amount, Duration duration){
+        Optional<User> opUser = userRepository.findByEmail(email);
+        Optional<Challenge> opChallenge = challengeRepository.findById(cid);
+        if (opUser.isEmpty() || opChallenge.isEmpty()) { return Optional.empty();}
+        Optional<Participation> opP = participationRepository.findByOwnerAndChallenge(opUser.get(), opChallenge.get());
+        if (opP.isEmpty()) { return Optional.empty();}
+        Participation p = opP.get();
+        if (p.getIsHabit()){
+            List<Date> completedDates = p.getCompletedDates();
+            completedDates.add(new Date());
+            p.setCompletedDates(completedDates);
+            int size = completedDates.size();
+            if (size > 1){
+                Date lastCheckin = completedDates.get(size-2);
+                Date thisCheckin = completedDates.get(size-1);
+                long diff = Math.abs(thisCheckin.getTime() - lastCheckin.getTime());
+                long diffDays = java.util.concurrent.TimeUnit.DAYS.convert(diff, java.util.concurrent.TimeUnit.MILLISECONDS);
+                if (diffDays <= 2){
+                    p.setStreak(p.getStreak() + 1);
+                }
+            }else{
+                p.setStreak(1);
+            }
+        }else{
+            ChallengeWorkload cw = p.getChallenge().getWorkload();
+            if (p.getIsQuantity()){
+                if (amount > ((QuantityWorkload) cw).getAmount() - p.getProgress()){
+                    return Optional.empty();
+                }
+                p.setProgress(p.getProgress() + amount);
+            }else{
+                int cmp = duration.compareTo(((TimeWorkload) cw).getDuration().minus(p.getDurationProgress()));
+                if (cmp > 0){
+                    return Optional.empty();
+                }
+                p.setDurationProgress(p.getDurationProgress().plus(duration));
+            }
+        }
+        participationRepository.saveAndFlush(p);
+        return Optional.of(p);
+    }
+
 //    @Transactional
-//    public Optional<Integer> checkIn(String email, String cid, Integer amount, Period period){
-//        Optional<User> opUser = userRepository.findByEmail(email);
-//        Optional<Challenge> opChallenge = challengeRepository.findById(cid);
-//        if (opUser.isEmpty() || opChallenge.isEmpty()) { return Optional.empty();}
-//        Optional<Participation> opP = participationRepository.findByOwnerAndChallenge(opUser.get(), opChallenge.get());
-//        if (opP.isEmpty()) { return Optional.empty();}
-//        Participation p = opP.get();
-//        if (p.getIsHabit()){
-//            List<Date> completedDates = p.getCompletedDates();
-//            completedDates.add(new Date());
-//            p.setCompletedDates(completedDates);
-//        }else{
-//            Challenge c = opChallenge.get();
-//            if (c.getWorkload() instanceof QuantityWorkload){
-//                if (amount > ((QuantityWorkload) c.getWorkload()).getAmount() - p.getProgress()){
-//                    return Optional.empty();
-//                }
-//                p.setProgress(p.getProgress() + amount);
-//            }
-//        }
+//    public void cancelCheckIn(){
 //
 //    }
-
-    @Transactional
-    public void cancelCheckIn(){
-
-    }
 
     @Transactional
     public void addParticipationEntry(String email, String cid) throws NoSuchElementException{
@@ -142,9 +164,13 @@ public class ParticipationServiceImpl implements ParticipationService {
         Optional<Challenge> opChallenge = challengeRepository.findById(cid);
         if (opUser.isEmpty() || opChallenge.isEmpty()) { throw new NoSuchElementException();}
         Boolean isHabit = opChallenge.get().getFrequency() != null;
+        Boolean isQuantity = opChallenge.get().getWorkload() instanceof QuantityWorkload;
+        Integer progress = (isQuantity)? 0: null;
+        Duration duration = (isQuantity)? null: Duration.ofHours(0).plusMinutes(0);;
+
         Participation newParticipation = new Participation(
-                opUser.get(), opChallenge.get(), isHabit, true,
-                0, Collections.emptyList(), 0
+                opUser.get(), opChallenge.get(), isHabit, true, isQuantity, progress, duration,
+                Collections.emptyList(), 0
         );
         participationRepository.saveAndFlush(newParticipation);
     }

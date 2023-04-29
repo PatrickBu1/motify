@@ -1,7 +1,6 @@
 package com.cs4523groupb11.Motify.DTO.request_non_entity;
 
 public class DiscussionPostRequest {
-    private String ownerId;
 
     private String content;
 
@@ -9,14 +8,11 @@ public class DiscussionPostRequest {
 
 
     public DiscussionPostRequest(){}
-    public DiscussionPostRequest(String ownerId, String content, String challengeId){
-        this.ownerId = ownerId;
+    public DiscussionPostRequest(String content, String challengeId){
         this.content = content;
         this.challengeId = challengeId;
     }
 
-    public String getOwnerId() {return ownerId;}
-    public void setOwnerId(String ownerId) {this.ownerId = ownerId;}
 
     public String getContent(){
         return content;

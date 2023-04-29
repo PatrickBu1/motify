@@ -62,12 +62,13 @@ public class AuthServiceImpl implements AuthService {
         String jwt = jwtTokenUtility.generateJwtToken(authentication);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .toList();
-
-        return Optional.of(new LoginResponse(jwt, new UserDTO(userDetails.getId(), userDetails.getUsername(),
-                userDetails.getEmail(), "")));
+//        List<String> roles = userDetails.getAuthorities().stream()
+//                .map(GrantedAuthority::getAuthority)
+//                .toList();
+        Optional<User> opUser = userRepository.findByEmail(userDetails.getEmail());
+        if (opUser.isEmpty()){return Optional.empty();}
+        User user = opUser.get();
+        return Optional.of(new LoginResponse(jwt, UserDTO.fromEntity(user)));
     }
 
     @Transactional
