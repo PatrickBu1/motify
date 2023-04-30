@@ -66,20 +66,26 @@ public class ChallengeController {
 
 
     @PostMapping("/create")
-    public ResponseEntity<String> create(@RequestHeader(name = "Authorization") String auth,
+    public ResponseEntity<ChallengeDTO> create(@RequestHeader(name = "Authorization") String auth,
                                          @RequestBody ChallengeDTO challengeDTO){
         String username = jwt.getFromHeader(auth);
-        Optional<String> opId = challengeService.create(username, challengeDTO);
-        return opId.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());
+        Optional<Challenge> opChallenge = challengeService.create(username, challengeDTO);
+        return opChallenge.map(challenge -> ResponseEntity.ok(ChallengeDTO.fromEntity(challenge)))
+                .orElseGet(() -> ResponseEntity.badRequest().build());
+
     }
 
 
     @PutMapping("/update")
-    public ResponseEntity<String> update(@RequestHeader(name = "Authorization") String auth,
+    public ResponseEntity<?> update(@RequestHeader(name = "Authorization") String auth,
                                          @RequestBody ChallengeDTO challengeDTO){
         String username = jwt.getFromHeader(auth);
-        Optional<String> opId = challengeService.update(username, challengeDTO);
-        return opId.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());
+        Boolean ok = challengeService.update(username, challengeDTO);
+        if (ok){
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.badRequest().build();
+
     }
 
 

@@ -73,7 +73,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
 
     @Transactional
-    public Optional<String> create(String email, ChallengeDTO dto){
+        public Optional<Challenge> create(String email, ChallengeDTO dto){
         Optional<User> opUser = userRepository.findById(dto.getOwnerId());
         if (opUser.isEmpty() || !opUser.get().getEmail().equals(email)){
             return Optional.empty();
@@ -95,18 +95,18 @@ public class ChallengeServiceImpl implements ChallengeService {
         }catch(Exception e){
             return Optional.empty();
         }
-        return Optional.of(saved.getId());
+        return Optional.of(saved);
     }
 
     @Transactional
-    public Optional<String> update(String email, ChallengeDTO dto){
+    public Boolean update(String email, ChallengeDTO dto){
         Optional<Challenge> opChallenge = challengeRepository.findById(dto.getId());
         Optional<User> opUser = userRepository.findById(dto.getOwnerId());
         if (opChallenge.isEmpty() ||
                 opUser.isEmpty() ||
                 !opChallenge.get().getOwner().getEmail().equals(email) ||
                 !opUser.get().getEmail().equals(email)) {
-            return Optional.empty();
+            return false;
         }
         ChallengeWorkloadDTO cwDto = dto.getWorkload();
         ChallengeWorkload cw;
@@ -120,13 +120,12 @@ public class ChallengeServiceImpl implements ChallengeService {
                 ChallengeCategory.valueOf(dto.getCategory()), dto.getIsOngoing(), dto.getStartDate(),
                 dto.getEndDate(), tu, cw, dto.getCreatedAt());
         c.setId(dto.getId());
-        Challenge saved;
         try{
-            saved = challengeRepository.saveAndFlush(c);
+            challengeRepository.saveAndFlush(c);
         }catch(Exception e){
-            return Optional.empty();
+            return false;
         }
-        return Optional.of(saved.getId());
+        return true;
     }
 
     @Transactional

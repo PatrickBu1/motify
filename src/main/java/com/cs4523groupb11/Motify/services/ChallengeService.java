@@ -17,9 +17,9 @@ public interface ChallengeService {
 
     public Optional<List<Challenge>> getAllPublicChallengesByOwner(String id);
 
-    public Optional<String> create(String username, ChallengeDTO c);
+    public Optional<Challenge> create(String username, ChallengeDTO c);
 
-    public Optional<String> update(String username, ChallengeDTO c);
+    public Boolean update(String username, ChallengeDTO c);
 
     public void delete(String username, String id) throws NoSuchElementException;
 
