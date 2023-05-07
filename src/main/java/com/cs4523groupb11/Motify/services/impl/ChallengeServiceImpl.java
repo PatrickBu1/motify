@@ -57,6 +57,10 @@ public class ChallengeServiceImpl implements ChallengeService {
         return challengeRepository.findByIsPrivateFalse(pageable);
     }
 
+    public List<Challenge> getAllPublic(){
+        return challengeRepository.findAllByIsPrivateFalse();
+    }
+
 
     @Transactional
     public Optional<List<Challenge>> getAllPrivateChallenges(String email){

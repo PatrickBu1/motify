@@ -48,7 +48,7 @@ public class UserController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/getListByIds")
+    @PostMapping("/getListByIds")
     public ResponseEntity<List<UserDTO>> getListByIds(@RequestBody List<String> idList){
         List<User> userList = userService.findListByIds(idList);
         if (userList.isEmpty()) {return ResponseEntity.notFound().build();}
@@ -69,10 +69,11 @@ public class UserController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping("/uploadUserProfileImage/{}")
+    @PostMapping("/uploadUserProfileImage")
     public ResponseEntity<?> setProfileImage(@RequestHeader(name = "Authorization") String auth,
                                              @RequestParam(value = "file") MultipartFile image){
-        Optional<User> opUser = userService.setProfilePicture(auth, image);
+        String email = jwt.getFromHeader(auth);
+        Optional<User> opUser = userService.setProfilePicture(email, image);
         if (opUser.isEmpty()){
             return ResponseEntity.badRequest().build();
         }

@@ -102,7 +102,7 @@ public class ParticipationController {
     }
 
 
-    @PostMapping("/joinPublic/{id}")
+    @GetMapping("/joinPublic/{id}")
     public ResponseEntity<Void> joinPublicChallenge(@RequestHeader(name = "Authorization") String auth,
                                                          @PathVariable String id){
         String email = jwt.getFromHeader(auth);
@@ -114,7 +114,7 @@ public class ParticipationController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/quitPublic/{id}")
+    @GetMapping("/quitPublic/{id}")
     public ResponseEntity<Void> quitPublicChallenge(@RequestHeader(name = "Authorization") String auth,
                                                          @PathVariable String id){
         String email = jwt.getFromHeader(auth);

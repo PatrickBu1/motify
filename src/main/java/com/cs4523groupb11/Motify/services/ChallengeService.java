@@ -13,6 +13,8 @@ public interface ChallengeService {
 
     public Page<Challenge> getPage(Integer page, Integer size);
 
+    public List<Challenge> getAllPublic();
+
     public Optional<List<Challenge>> getAllPrivateChallenges(String username);
 
     public Optional<List<Challenge>> getAllPublicChallengesByOwner(String id);

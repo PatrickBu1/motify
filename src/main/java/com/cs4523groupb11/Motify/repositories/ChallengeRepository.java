@@ -19,6 +19,8 @@ public interface ChallengeRepository extends JpaRepository<Challenge, String> {
 
         Page<Challenge> findByIsPrivateFalse(Pageable pageable);
 
+        List<Challenge> findAllByIsPrivateFalse();
+
         List<Challenge> findByIsPrivateTrueAndOwner(User owner);
 
         List<Challenge> findByIsPrivateFalseAndOwner(User owner);

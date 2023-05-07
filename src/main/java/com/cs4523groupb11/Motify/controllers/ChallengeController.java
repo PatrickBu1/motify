@@ -47,6 +47,12 @@ public class ChallengeController {
         return ResponseEntity.ok(resPage.map(ChallengeDTO::fromEntity));
     }
 
+    @GetMapping("/getAllPublic")
+    public ResponseEntity<List<ChallengeDTO>> getAllPublic(){
+        List<Challenge> resList = challengeService.getAllPublic();
+        return ResponseEntity.ok(resList.stream().map(ChallengeDTO::fromEntity).toList());
+    }
+
 
     @GetMapping("/getAllPrivate")
     public ResponseEntity<List<ChallengeDTO>> getAllPrivate(@RequestHeader(name = "Authorization") String auth) {
