@@ -10,14 +10,13 @@ import com.cs4523groupb11.Motify.entities.User;
 import com.cs4523groupb11.Motify.security.JwtTokenUtility;
 import com.cs4523groupb11.Motify.services.ParticipationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/participation")
@@ -82,21 +81,39 @@ public class ParticipationController {
     }
 
     @GetMapping("/getSelfChallengesByDate/{date}")
-    public ResponseEntity<List<ChallengeDTO>> getSelfChallengesByDate(@RequestHeader(name = "Authorization") String auth,
-                                                                           @PathVariable Date date){
+    public ResponseEntity<List<Pair<ChallengeDTO, Boolean>>> getSelfChallengesByDate(@RequestHeader(name = "Authorization") String auth,
+                                                                      @PathVariable
+                                                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                                      Date date){
         String email = jwt.getFromHeader(auth);
-        Optional<List<Challenge>> res = participationService.getSelfChallengesByDate(email, date);
-        return res.map(challenges -> ResponseEntity.ok(challenges.stream().map(ChallengeDTO::fromEntity).toList()))
-                .orElseGet(() -> ResponseEntity.badRequest().build());
+        Optional<List<Pair<Challenge, Boolean>>> opList = participationService.getSelfChallengesByDate(email, date);
+        if (opList.isEmpty()) {return ResponseEntity.badRequest().build();}
+        List<Pair<Challenge, Boolean>> res = opList.get();
+
+        List<Pair<ChallengeDTO, Boolean>> ret = new ArrayList<>();
+        for (Pair<Challenge, Boolean> item : res) {
+            ret.add(Pair.of(ChallengeDTO.fromEntity(item.getFirst()), item.getSecond()));
+        }
+
+        return ResponseEntity.ok(ret);
     }
 
     @PostMapping("/checkin")
-    public ResponseEntity<ParticipationDTO> checkIn(@RequestHeader(name="Authorization") String auth,
+    public ResponseEntity<ParticipationDTO> checkin(@RequestHeader(name="Authorization") String auth,
                                                     @RequestBody CheckInRequest req
                                                     ){
         String email = jwt.getFromHeader(auth);
         Optional<Participation> res = participationService.checkIn(email, req.getChallengeId(), req.getAmount(),
                 req.getDuration());
+        return res.map(participation -> ResponseEntity.ok(ParticipationDTO.fromEntity(participation)))
+                .orElseGet(() -> ResponseEntity.badRequest().build());
+    }
+
+    @GetMapping("/uncheckin/{id}")
+    public ResponseEntity<ParticipationDTO> unCheckin(@RequestHeader(name="Authorization") String auth,
+                                                      @PathVariable String id){
+        String email = jwt.getFromHeader(auth);
+        Optional<Participation> res = participationService.unCheckIn(email, id);
         return res.map(participation -> ResponseEntity.ok(ParticipationDTO.fromEntity(participation)))
                 .orElseGet(() -> ResponseEntity.badRequest().build());
     }

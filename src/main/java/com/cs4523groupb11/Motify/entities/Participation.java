@@ -35,10 +35,11 @@ public class Participation {
 
     public Participation(){}
 
-    public Participation(User owner, Challenge challenge, Boolean isHabit, Boolean isActive, Boolean isQuantity,
+    public Participation(User owner, Challenge challenge, Boolean isPrivate, Boolean isHabit, Boolean isActive, Boolean isQuantity,
                          Integer progress, Duration durationProgress, List<Date> completedDates, Integer streak){
         this.owner = owner;
         this.challenge = challenge;
+        this.isPrivate = isPrivate;
         this.isHabit = isHabit;
         this.isActive = isActive;
         this.isQuantity = isQuantity;

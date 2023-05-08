@@ -5,6 +5,7 @@ import com.cs4523groupb11.Motify.DTO.entity.QuantityWorkloadDTO;
 import com.cs4523groupb11.Motify.DTO.entity.TimeWorkloadDTO;
 import com.cs4523groupb11.Motify.DTO.entity.abstraction.ChallengeWorkloadDTO;
 import com.cs4523groupb11.Motify.entities.Challenge;
+import com.cs4523groupb11.Motify.entities.Participation;
 import com.cs4523groupb11.Motify.entities.User;
 import com.cs4523groupb11.Motify.entities.abstraction.ChallengeWorkload;
 import com.cs4523groupb11.Motify.entities.derived.QuantityWorkload;
@@ -12,20 +13,21 @@ import com.cs4523groupb11.Motify.entities.derived.TimeWorkload;
 import com.cs4523groupb11.Motify.entities.enums.ChallengeCategory;
 import com.cs4523groupb11.Motify.entities.enums.TimeUnit;
 import com.cs4523groupb11.Motify.repositories.ChallengeRepository;
+import com.cs4523groupb11.Motify.repositories.ParticipationRepository;
 import com.cs4523groupb11.Motify.repositories.UserRepository;
 import com.cs4523groupb11.Motify.services.ChallengeService;
+import com.cs4523groupb11.Motify.services.ParticipationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.time.Duration;
+import java.util.*;
 
 @Service
 public class ChallengeServiceImpl implements ChallengeService {
@@ -33,10 +35,14 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     private final UserRepository userRepository;
 
+    private final ParticipationService participationService;
+
     @Autowired
-    public ChallengeServiceImpl(ChallengeRepository challengeRepository, UserRepository userRepository) {
+    public ChallengeServiceImpl(ChallengeRepository challengeRepository, UserRepository userRepository,
+                                ParticipationService participationService) {
         this.challengeRepository = challengeRepository;
         this.userRepository = userRepository;
+        this.participationService = participationService;
     }
 
     @Transactional
@@ -77,7 +83,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
 
     @Transactional
-        public Optional<Challenge> create(String email, ChallengeDTO dto){
+    public Optional<Challenge> create(String email, ChallengeDTO dto){
         Optional<User> opUser = userRepository.findById(dto.getOwnerId());
         if (opUser.isEmpty() || !opUser.get().getEmail().equals(email)){
             return Optional.empty();
@@ -93,13 +99,14 @@ public class ChallengeServiceImpl implements ChallengeService {
         Challenge c = new Challenge(opUser.get(), dto.getName(), dto.getDescription(), dto.getIsPrivate(),
                 ChallengeCategory.valueOf(dto.getCategory()), dto.getIsOngoing(), dto.getStartDate(),
                 dto.getEndDate(), tu, cw, new Date());
-        Challenge saved;
         try{
+            Challenge saved;
             saved = challengeRepository.saveAndFlush(c);
+            participationService.addParticipationEntry(opUser.get().getEmail(), saved.getId());
+            return Optional.of(saved);
         }catch(Exception e){
             return Optional.empty();
         }
-        return Optional.of(saved);
     }
 
     @Transactional
@@ -136,6 +143,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     public void delete(String email, String id) {
         Optional<Challenge> pc = challengeRepository.findById(id);
         if (pc.isPresent() && pc.get().getOwner().getEmail().equals(email)) {
+            participationService.deleteParticipationEntry(email, id);
             challengeRepository.deleteById(id);
         }
         throw new NoSuchElementException();
